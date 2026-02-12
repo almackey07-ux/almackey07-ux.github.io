@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pike Fishing Trip - Lough Corrib</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background: linear-gradient(to bottom, #1b5e20 0%, #2e7d32 30%, #1565c0 100%);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+/* HEADER */
+h1 {
+    font-size: clamp(1.8rem, 6vw, 3rem);
+    margin-bottom: 10px;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.6);
+}
+
+h2 {
+    font-weight: 300;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+/* COUNTDOWN */
+#countdown {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.time-box {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 20px;
+    min-width: 100px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+.time {
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    font-weight: bold;
+}
+
+.label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* SECTIONS */
+.section {
+    margin: 40px 0;
+    padding: 20px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* PIKE SWIM */
+.pike {
+    position: fixed;
+    bottom: 60px;
+    left: -200px;
+    font-size: 3rem;
+    animation: swim 25s linear infinite;
+    opacity: 0.4;
+}
+
+@keyframes swim {
+    0% { left: -200px; transform: scaleX(1); }
+    50% { transform: scaleX(1); }
+    51% { transform: scaleX(-1); }
+    100% { left: 120%; transform: scaleX(-1); }
+}
+
+/* CHECKLIST */
+.checklist label {
+    display: block;
+    margin: 8px 0;
+}
+
+/* LEADERBOARD */
+.leaderboard div {
+    margin: 6px 0;
+}
+
+.footer {
+    margin-top: 40px;
+    opacity: 0.8;
+}
+</style>
+</head>
+<body>
+
+<h1>🎣 Pike Fishing Trip – Lough Corrib 🇮🇪</h1>
+<h2>Leaving 7th March at 5:00 AM</h2>
+
+<div id="countdown">
+    <div class="time-box">
+        <div id="days" class="time">0</div>
+        <div class="label">Days</div>
+    </div>
+    <div class="time-box">
+        <div id="hours" class="time">0</div>
+        <div class="label">Hours</div>
+    </div>
+    <div class="time-box">
+        <div id="minutes" class="time">0</div>
+        <div class="label">Minutes</div>
+    </div>
+    <div class="time-box">
+        <div id="seconds" class="time">0</div>
+        <div class="label">Seconds</div>
+    </div>
+</div>
+
+<!-- Weather -->
+<div class="section">
+    <h3>🌦 Lough Corrib Weather</h3>
+    <p id="weather">Loading weather...</p>
+</div>
+
+<!-- Checklist -->
+<div class="section">
+    <h3>🧰 Who's Bringing What</h3>
+    <div class="checklist">
+        <label><input type="checkbox"> Rods</label>
+        <label><input type="checkbox"> Deadbait</label>
+        <label><input type="checkbox"> Lures</label>
+        <label><input type="checkbox"> Landing Net</label>
+        <label><input type="checkbox"> Life Jackets</label>
+        <label><input type="checkbox"> Flasks ☕</label>
+    </div>
+</div>
+
+<!-- Leaderboard -->
+<div class="section">
+    <h3>🏆 Pike Leaderboard (Predictions)</h3>
+    <div class="leaderboard">
+        <div>🥇 Mick – 18lb</div>
+        <div>🥈 Dave – 16lb</div>
+        <div>🥉 Al – 15lb</div>
+    </div>
+</div>
+
+<div class="footer">
+    Early start. Big pike. Tight lines. 🐊
+</div>
+
+<div class="pike">🐊</div>
+
+<script>
+// COUNTDOWN
+const tripDate = new Date("March 7, 2026 05:00:00").getTime();
+
+setInterval(function() {
+    const now = new Date().getTime();
+    const distance = tripDate - now;
+
+    if (distance <= 0) {
+        document.body.innerHTML = "<h1>🎉 Time to hit Corrib! 🎣</h1>";
+        return;
+    }
+
+    document.getElementById("days").innerText =
+        Math.floor(distance / (1000 * 60 * 60 * 24));
+    document.getElementById("hours").innerText =
+        Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    document.getElementById("minutes").innerText =
+        Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    document.getElementById("seconds").innerText =
+        Math.floor((distance % (1000 * 60)) / 1000);
+
+}, 1000);
+
+// SIMPLE WEATHER (Open-Meteo Free API)
+fetch("https://api.open-meteo.com/v1/forecast?latitude=53.45&longitude=-9.23&current_weather=true")
+.then(response => response.json())
+.then(data => {
+    const weather = data.current_weather;
+    document.getElementById("weather").innerText =
+        `Temp: ${weather.temperature}°C | Wind: ${weather.windspeed} km/h`;
+})
+.catch(() => {
+    document.getElementById("weather").innerText =
+        "Weather unavailable — sure it'll be grand.";
+});
+</script>
+
+</body>
+</html>
