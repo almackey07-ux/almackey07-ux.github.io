@@ -7,7 +7,7 @@
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif;}
 body {
-    color:white; text-align:center; padding:20px; background:#1b5e20; transition:background 1s;
+    color:white; text-align:center; padding:20px; background:#1b5e20; transition:background 1s; overflow-x:hidden;
 }
 
 /* RIPPLE OVERLAY */
@@ -110,14 +110,20 @@ h2 { font-weight:300; margin-bottom:25px; opacity:0.9; z-index:1; position:relat
 <!-- Ripple overlay -->
 <div class="ripple"></div>
 
-<!-- Audio -->
-<audio id="lake-sound" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+<!-- Multiple Ambient Sounds -->
+<audio id="sound-lake" loop>
+  <source src="lake-waves.mp3" type="audio/mpeg">
 </audio>
-<div class="audio-toggle" id="audio-toggle">🔊 Toggle Lake Sounds</div>
+<audio id="sound-birds" loop>
+  <source src="birds.mp3" type="audio/mpeg">
+</audio>
+<audio id="sound-wind" loop>
+  <source src="wind.mp3" type="audio/mpeg">
+</audio>
+
+<div class="audio-toggle" id="audio-toggle">🔊 Toggle Ambient Sounds</div>
 
 <script>
-// DOM READY
 document.addEventListener('DOMContentLoaded',()=>{
 
 // COUNTDOWN
@@ -149,9 +155,17 @@ document.querySelectorAll('.leaderboard div').forEach(div=>{
     });
 });
 
-// AUDIO
-const audio=document.getElementById('lake-sound');
-document.getElementById('audio-toggle').addEventListener('click',()=>{audio.paused?audio.play():audio.pause();});
+// AMBIENT SOUNDS TOGGLE
+const sounds = [
+  document.getElementById('sound-lake'),
+  document.getElementById('sound-birds'),
+  document.getElementById('sound-wind')
+];
+document.getElementById('audio-toggle').addEventListener('click',()=>{
+    const isPlaying = sounds.some(s => !s.paused);
+    if(isPlaying){ sounds.forEach(s=>s.pause()); } 
+    else{ sounds.forEach(s=>{ s.volume=0.25; s.play(); }); }
+});
 
 // WEATHER
 async function updateWeather(){
@@ -168,7 +182,6 @@ async function updateWeather(){
         document.getElementById('wind-speed').innerText=wind+' km/h';
         document.getElementById('wind-arrow').style.transform='rotate('+windDir+'deg)';
 
-        // Weather icon & background
         let icon='☀️', bg='linear-gradient(to bottom,#1b5e20 0%,#2e7d32 30%,#1565c0 100%)';
         if([0].includes(code)){icon='☀️'; bg='linear-gradient(to bottom,#1b5e20 0%,#2e7d32 30%,#1565c0 100%)';}
         else if([1,2,3].includes(code)){icon='⛅'; bg='linear-gradient(to bottom,#2e7d32 0%,#4caf50 40%,#1565c0 100%)';}
@@ -179,7 +192,7 @@ async function updateWeather(){
     }catch(e){console.log(e);}
 }
 updateWeather();
-setInterval(updateWeather,600000); // every 10 minutes
+setInterval(updateWeather,600000);
 
 }); // DOMContentLoaded
 </script>
