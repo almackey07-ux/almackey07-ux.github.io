@@ -4,203 +4,179 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pike Fishing Trip - Lough Corrib</title>
-
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', sans-serif;
+* {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif;}
+html,body {height:100%; width:100%; overflow:hidden;}
+body {
+    color:white; text-align:center; padding:20px;
+    background:linear-gradient(to bottom,#1b5e20 0%,#2e7d32 30%,#1565c0 100%);
+    transition: background 1s;
 }
 
-body {
-    background: linear-gradient(to bottom, #1b5e20 0%, #2e7d32 30%, #1565c0 100%);
-    color: white;
-    text-align: center;
-    padding: 20px;
-    overflow-x: hidden;
+/* RIPPLE ANIMATION */
+body::before {
+    content:""; position:absolute; top:0; left:0; width:200%; height:200%;
+    background:radial-gradient(circle at center, rgba(255,255,255,0.04) 0%, transparent 70%);
+    animation:ripple 12s linear infinite;
+    z-index:0;
 }
+@keyframes ripple {0%{transform:scale(1) translateY(0);}100%{transform:scale(1.2) translateY(-30px);}}
 
 /* HEADER */
-h1 {
-    font-size: clamp(1.8rem, 6vw, 3rem);
-    margin-bottom: 10px;
-    text-shadow: 0 4px 15px rgba(0,0,0,0.6);
-}
-
-h2 {
-    font-weight: 300;
-    margin-bottom: 30px;
-    opacity: 0.9;
-}
+h1 { font-size:clamp(2rem,6vw,4rem); text-shadow:0 4px 15px rgba(0,0,0,0.6); z-index:2; position:relative; }
+h2 { font-weight:300; margin-bottom:30px; opacity:0.9; z-index:2; position:relative; }
 
 /* COUNTDOWN */
-#countdown {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 40px;
-}
-
-.time-box {
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(8px);
-    border-radius: 20px;
-    padding: 20px;
-    min-width: 100px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-}
-
-.time {
-    font-size: clamp(1.5rem, 5vw, 2.5rem);
-    font-weight: bold;
-}
-
-.label {
-    font-size: 0.9rem;
-    opacity: 0.8;
-}
+#countdown { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; margin-bottom:40px; z-index:2; position:relative;}
+.time-box {background:rgba(255,255,255,0.1);backdrop-filter:blur(12px);border-radius:20px;padding:25px;min-width:100px;box-shadow:0 8px 25px rgba(0,0,0,0.5); transition:transform 0.3s;}
+.time-box:hover{transform:scale(1.05);}
+.time {font-size:clamp(1.5rem,5vw,3rem); font-weight:bold;}
+.label {font-size:0.9rem; opacity:0.8;}
 
 /* SECTIONS */
-.section {
-    margin: 40px 0;
-    padding: 20px;
-    background: rgba(0,0,0,0.25);
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
+.section {margin:40px 0; padding:25px; background:rgba(0,0,0,0.3); border-radius:20px; box-shadow:0 8px 20px rgba(0,0,0,0.35); z-index:2; position:relative;}
 
 /* PIKE SWIM */
 .pike {
-    position: fixed;
-    bottom: 60px;
-    left: -200px;
-    font-size: 3rem;
-    animation: swim 25s linear infinite;
-    opacity: 0.4;
+    position:absolute; bottom:50px; font-size:3rem; opacity:0.4;
+    animation:swim 25s linear infinite;
 }
-
-@keyframes swim {
-    0% { left: -200px; transform: scaleX(1); }
-    50% { transform: scaleX(1); }
-    51% { transform: scaleX(-1); }
-    100% { left: 120%; transform: scaleX(-1); }
-}
+@keyframes swim {0%{left:-200px;transform:scaleX(1);}50%{transform:scaleX(1);}51%{transform:scaleX(-1);}100%{left:120%;transform:scaleX(-1);}}
 
 /* CHECKLIST */
-.checklist label {
-    display: block;
-    margin: 8px 0;
-}
+.checklist label {display:block; margin:8px 0; cursor:pointer;}
+.checklist input {margin-right:8px;}
 
 /* LEADERBOARD */
-.leaderboard div {
-    margin: 6px 0;
-}
+.leaderboard div {margin:6px 0; cursor:pointer;}
+.leaderboard div:hover{text-decoration:underline;}
 
-.footer {
-    margin-top: 40px;
-    opacity: 0.8;
-}
+/* WEATHER */
+.weather {display:flex; justify-content:center; align-items:center; gap:10px; font-size:1.3rem;}
+.wind-arrow {display:inline-block; transform:rotate(0deg); transition:transform 1s; font-size:1.2rem;}
+
+/* AUDIO TOGGLE */
+.audio-toggle {margin-top:15px; cursor:pointer; font-size:1rem; color:#a5d6a7;}
+
+/* FULLSCREEN */
+body.fullscreen {height:100vh;width:100vw; display:flex; flex-direction:column; justify-content:center; align-items:center;}
 </style>
 </head>
-<body>
+<body class="fullscreen">
 
 <h1>🎣 Pike Fishing Trip – Lough Corrib 🇮🇪</h1>
 <h2>Leaving 7th March at 5:00 AM</h2>
 
 <div id="countdown">
-    <div class="time-box">
-        <div id="days" class="time">0</div>
-        <div class="label">Days</div>
-    </div>
-    <div class="time-box">
-        <div id="hours" class="time">0</div>
-        <div class="label">Hours</div>
-    </div>
-    <div class="time-box">
-        <div id="minutes" class="time">0</div>
-        <div class="label">Minutes</div>
-    </div>
-    <div class="time-box">
-        <div id="seconds" class="time">0</div>
-        <div class="label">Seconds</div>
-    </div>
+    <div class="time-box"><div id="days" class="time">0</div><div class="label">Days</div></div>
+    <div class="time-box"><div id="hours" class="time">0</div><div class="label">Hours</div></div>
+    <div class="time-box"><div id="minutes" class="time">0</div><div class="label">Minutes</div></div>
+    <div class="time-box"><div id="seconds" class="time">0</div><div class="label">Seconds</div></div>
 </div>
 
-<!-- Weather -->
+<!-- WEATHER -->
 <div class="section">
     <h3>🌦 Lough Corrib Weather</h3>
-    <p id="weather">Loading weather...</p>
+    <div class="weather">
+        <span id="weather-icon">☀️</span>
+        <span id="weather-temp">--°C</span>
+        <span id="wind-speed">-- km/h</span>
+        <span class="wind-arrow" id="wind-arrow">↑</span>
+    </div>
 </div>
 
 <!-- Checklist -->
 <div class="section">
     <h3>🧰 Who's Bringing What</h3>
     <div class="checklist">
-        <label><input type="checkbox"> Rods</label>
-        <label><input type="checkbox"> Deadbait</label>
-        <label><input type="checkbox"> Lures</label>
-        <label><input type="checkbox"> Landing Net</label>
-        <label><input type="checkbox"> Life Jackets</label>
-        <label><input type="checkbox"> Beers 🍻</label>
+        <label><input type="checkbox" data-key="rods">Rods</label>
+        <label><input type="checkbox" data-key="deadbait">Deadbait</label>
+        <label><input type="checkbox" data-key="lures">Lures</label>
+        <label><input type="checkbox" data-key="net">Landing Net</label>
+        <label><input type="checkbox" data-key="lifejackets">Life Jackets</label>
+        <label><input type="checkbox" data-key="flasks">Flasks ☕</label>
     </div>
 </div>
 
 <!-- Leaderboard -->
 <div class="section">
-    <h3>🏆 Who Will Reign As King Of The Corrib?</h3>
+    <h3>🏆 Who Will Reign As Of The Corrib?</h3>
     <div class="leaderboard">
-        <div>🥇 Al</div>
-        <div>🥈 Keiran 🤴</div>
-        <div>🥉 Heno</div>
+        <div data-key="1">🥇 Al</div>
+        <div data-key="2">🥈 Keiran 🤴</div>
+        <div data-key="3">🥉 Heno</div>
     </div>
 </div>
 
-<div class="footer">
-    Early start. Big pike. Tight lines. 🐊
-</div>
+<div class="footer">Early start. Big pike. Tight lines. 🐊</div>
 
-<div class="pike">🐊</div>
+<!-- Multiple Pike Animations -->
+<div class="pike" style="animation-delay:0s;">🐊</div>
+<div class="pike" style="animation-delay:5s; font-size:2.5rem;">🐊</div>
+<div class="pike" style="animation-delay:10s; font-size:3.2rem;">🐊</div>
+
+<!-- AUDIO -->
+<audio id="lake-sound" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+<div class="audio-toggle" id="audio-toggle">🔊 Toggle Lake Sounds</div>
 
 <script>
 // COUNTDOWN
 const tripDate = new Date("March 7, 2026 05:00:00").getTime();
+setInterval(()=>{
+    const now=new Date().getTime(); const dist=tripDate-now;
+    if(dist<=0){document.body.innerHTML="<h1>🎉 Time to hit Corrib! 🎣</h1>"; return;}
+    document.getElementById("days").innerText=Math.floor(dist/(1000*60*60*24));
+    document.getElementById("hours").innerText=Math.floor((dist%(1000*60*60*24))/(1000*60*60));
+    document.getElementById("minutes").innerText=Math.floor((dist%(1000*60*60))/(1000*60));
+    document.getElementById("seconds").innerText=Math.floor((dist%(1000*60))/1000);
+},1000);
 
-setInterval(function() {
-    const now = new Date().getTime();
-    const distance = tripDate - now;
-
-    if (distance <= 0) {
-        document.body.innerHTML = "<h1>🎉 Time to hit Corrib! 🎣</h1>";
-        return;
-    }
-
-    document.getElementById("days").innerText =
-        Math.floor(distance / (1000 * 60 * 60 * 24));
-    document.getElementById("hours").innerText =
-        Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    document.getElementById("minutes").innerText =
-        Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    document.getElementById("seconds").innerText =
-        Math.floor((distance % (1000 * 60)) / 1000);
-
-}, 1000);
-
-// SIMPLE WEATHER (Open-Meteo Free API)
-fetch("https://api.open-meteo.com/v1/forecast?latitude=53.45&longitude=-9.23&current_weather=true")
-.then(response => response.json())
-.then(data => {
-    const weather = data.current_weather;
-    document.getElementById("weather").innerText =
-        `Temp: ${weather.temperature}°C | Wind: ${weather.windspeed} km/h`;
-})
-.catch(() => {
-    document.getElementById("weather").innerText =
-        "Weather unavailable — sure it'll be grand.";
+// CHECKLIST LOCALSTORAGE
+document.querySelectorAll('.checklist input').forEach(box=>{
+    const key=box.dataset.key;
+    if(localStorage.getItem('check-'+key)=='true') box.checked=true;
+    box.addEventListener('change',()=>{localStorage.setItem('check-'+key, box.checked);});
 });
-</script>
 
-</body>
-</html>
+// LEADERBOARD LOCALSTORAGE
+document.querySelectorAll('.leaderboard div').forEach(div=>{
+    const key=div.dataset.key;
+    if(localStorage.getItem('leader-'+key)) div.innerText=localStorage.getItem('leader-'+key);
+    div.addEventListener('click',()=>{
+        const newName=prompt("Enter new name/catch:",div.innerText);
+        if(newName){ div.innerText=newName; localStorage.setItem('leader-'+key,newName);}
+    });
+});
+
+// AUDIO TOGGLE
+const audio=document.getElementById('lake-sound');
+document.getElementById('audio-toggle').addEventListener('click',()=>{audio.paused?audio.play():audio.pause();});
+
+// WEATHER FUNCTION
+async function updateWeather(){
+    try{
+        const res=await fetch("https://api.open-meteo.com/v1/forecast?latitude=53.45&longitude=-9.23&current_weather=true");
+        const data=await res.json();
+        const w=data.current_weather;
+        const temp=w.temperature;
+        const wind=w.windspeed;
+        const windDir=w.winddirection;
+        document.getElementById('weather-temp').innerText=temp+'°C';
+        document.getElementById('wind-speed').innerText=wind+' km/h';
+        document.getElementById('wind-arrow').style.transform='rotate('+windDir+'deg)';
+
+        // Weather icon & background
+        let icon='☀️', bg='linear-gradient(to bottom,#1b5e20 0%,#2e7d32 30%,#1565c0 100%)';
+        const code=w.weathercode;
+        if([0].includes(code)){icon='☀️'; bg='linear-gradient(to bottom,#1b5e20 0%,#2e7d32 30%,#1565c0 100%)';}
+        else if([1,2,3].includes(code)){icon='⛅'; bg='linear-gradient(to bottom,#2e7d32 0%,#4caf50 40%,#1565c0 100%)';}
+        else if([45,48,51,53,55,61,63,65,80,81,82].includes(code)){icon='🌧️'; bg='linear-gradient(to bottom,#37474f 0%,#607d8b 40%,#1565c0 100%)';}
+        else{icon='🌫️'; bg='linear-gradient(to bottom,#546e7a 0%,#78909c 40%,#1565c0 100%)';}
+        document.getElementById('weather-icon').innerText=icon;
+        document.body.style.background=bg;
+    }catch(e){console.log(e);}
+}
+updateWeather();
+setInterval(updateWeather
