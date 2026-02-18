@@ -3,11 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Pike Fishing Trip - Lough Corrib</title>
 
 <style>
-
 *{
 margin:0;
 padding:0;
@@ -16,454 +14,280 @@ font-family:'Segoe UI',sans-serif;
 }
 
 body{
-
 color:white;
 text-align:center;
 padding:20px;
-background:#1b5e20;
-transition:background 1s;
-
+background:linear-gradient(#2c5364,#203a43,#0f2027);
 }
 
 .section{
-
-margin:25px 0;
+margin:22px 0;
 padding:20px;
-background:rgba(0,0,0,0.25);
-border-radius:15px;
-box-shadow:0 8px 20px rgba(0,0,0,0.3);
-
+background:rgba(255,255,255,0.08);
+border-radius:18px;
+box-shadow:0 8px 25px rgba(0,0,0,0.35);
+backdrop-filter:blur(6px);
 }
 
-.weather{
-
+.countdown{
 display:flex;
 justify-content:center;
-gap:10px;
-margin-top:8px;
+gap:14px;
 flex-wrap:wrap;
+}
 
+.tile{
+background:rgba(255,255,255,0.12);
+padding:18px;
+border-radius:14px;
+min-width:90px;
+box-shadow:0 6px 18px rgba(0,0,0,0.35);
+}
+
+.tile .num{
+font-size:28px;
+font-weight:700;
+}
+
+.tile .label{
+font-size:13px;
+opacity:.8;
+}
+
+.weather-row{
+display:flex;
+justify-content:center;
+gap:12px;
+flex-wrap:wrap;
+margin-top:8px;
+}
+
+.checklist{
+text-align:left;
+display:inline-block;
+}
+
+.checklist label{
+display:block;
+margin:6px 0;
 }
 
 .audio-toggle{
-
-margin-top:15px;
+margin-top:18px;
 cursor:pointer;
 color:#a5d6a7;
-
+font-size:18px;
 }
 
-.good {color:#69f0ae;}
-ok {color:#ffd740;}
-bad {color:#ff5252;}
-
+.small{
+opacity:.85;
+font-size:14px;
+}
 </style>
 </head>
+
 <body>
 
-
 <h1>🎣 Pike Fishing Trip – Lough Corrib 🇮🇪</h1>
-<h2>Leaving 7th March at 5:00 AM</h2>
-
-
+<h2 class="small">Leaving 7th March at 5:00 AM</h2>
 
 <!-- COUNTDOWN -->
-
 <div class="section">
-
-<span id="days"></span>d
-<span id="hours"></span>h
-<span id="minutes"></span>m
-<span id="seconds"></span>s
-
+<div class="countdown">
+<div class="tile"><div class="num" id="days">0</div><div class="label">Days</div></div>
+<div class="tile"><div class="num" id="hours">0</div><div class="label">Hours</div></div>
+<div class="tile"><div class="num" id="minutes">0</div><div class="label">Minutes</div></div>
+<div class="tile"><div class="num" id="seconds">0</div><div class="label">Seconds</div></div>
+</div>
 </div>
 
-
+<!-- WEATHER -->
+<div class="section">
+<h3>🌦 Lough Corrib Weather</h3>
+<div class="weather-row">
+<span id="weather-temp">--°C</span>
+<span id="wind-speed"></span>
+<span id="wind-dir"></span>
+</div>
+</div>
 
 <!-- CONDITIONS -->
-
 <div class="section">
+<h3>🎯 Pike Conditions</h3>
 
-<h3>🌦 Conditions</h3>
-
-
-<div class="weather">
-
-<span id="weather-temp"></span>
-
-<span id="wind-speed"></span>
-
-<span id="wind-dir"></span>
+<div class="weather-row">🌊 Level: <span id="water-level">--</span></div>
+<div class="weather-row">🌡 Pressure: <span id="pressure">--</span> <span id="pressure-trend"></span></div>
+<div class="weather-row">🌙 Moon: <span id="moon"></span></div>
+<div class="weather-row">🐊 Feeding: <span id="feeding"></span></div>
+<div class="weather-row">🎣 Lure: <span id="lure"></span></div>
+<div class="weather-row">🔥 Activity: <span id="activity"></span></div>
 
 </div>
 
-
-<div class="weather">
-
-🌊 Level:
-
-<span id="water-level"></span>
-
+<!-- CHECKLIST -->
+<div class="section">
+<h3>🧰 Who's Bringing What</h3>
+<div class="checklist">
+<label><input type="checkbox"> Rods</label>
+<label><input type="checkbox"> Deadbait</label>
+<label><input type="checkbox"> Lures</label>
+<label><input type="checkbox"> Landing Net</label>
+<label><input type="checkbox"> Life Jackets</label>
+<label><input type="checkbox"> Flasks ☕</label>
+</div>
 </div>
 
-
-<div class="weather">
-
-🌡 Pressure:
-
-<span id="pressure"></span>
-
-<span id="pressure-trend"></span>
-
+<!-- LEADERBOARD -->
+<div class="section">
+<h3>🏆 Who Will Reign As King Of The Corrib?</h3>
+<div>🥇 Al</div>
+<div>🥈 Keiran 👑</div>
+<div>🥉 Heno</div>
 </div>
 
-
-<div class="weather">
-
-🌙 Moon:
-
-<span id="moon"></span>
-
-</div>
-
-
-<div class="weather">
-
-🐊 Feeding:
-
-<span id="feeding"></span>
-
-</div>
-
-
-<div class="weather">
-
-🎣 Lure:
-
-<span id="lure"></span>
-
-</div>
-
-
-<div class="weather">
-
-🔥 Pike Activity:
-
-<span id="activity"></span>
-
-</div>
-
-
-</div>
-
-
+<p class="small">Early start. Big pike. Tight lines. 🐊</p>
 
 <!-- SOUND -->
-
 <audio id="sound" loop preload="auto">
-
 <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3">
-
 </audio>
 
-<div class="audio-toggle" id="audio">
-
-🔊 Toggle Lake Sound
-
-</div>
-
-
+<div class="audio-toggle" id="audioBtn">🔊 Toggle Ambient Sounds</div>
 
 <script>
-
 document.addEventListener("DOMContentLoaded",()=>{
 
+const el=id=>document.getElementById(id)
+
+const daysEl=el("days")
+const hoursEl=el("hours")
+const minutesEl=el("minutes")
+const secondsEl=el("seconds")
+
+const tempEl=el("weather-temp")
+const windSpeedEl=el("wind-speed")
+const windDirEl=el("wind-dir")
+const waterLevelEl=el("water-level")
+const pressureEl=el("pressure")
+const pressureTrendEl=el("pressure-trend")
+const moonEl=el("moon")
+const feedingEl=el("feeding")
+const lureEl=el("lure")
+const activityEl=el("activity")
 
 /* COUNTDOWN */
 
+const trip=new Date("2026-03-07T05:00:00")
 
-let trip=new Date("March 7 2026 05:00");
+function updateCountdown(){
+let diff=trip-new Date()
+if(diff<0) diff=0
+daysEl.innerText=Math.floor(diff/86400000)
+hoursEl.innerText=Math.floor(diff/3600000)%24
+minutesEl.innerText=Math.floor(diff/60000)%60
+secondsEl.innerText=Math.floor(diff/1000)%60
+}
 
+updateCountdown()
+setInterval(updateCountdown,1000)
 
-setInterval(()=>{
+/* WEATHER */
 
-let now=new Date();
-
-let diff=trip-now;
-
-days.innerText=Math.floor(diff/86400000);
-
-hours.innerText=Math.floor(diff/3600000)%24;
-
-minutes.innerText=Math.floor(diff/60000)%60;
-
-seconds.innerText=Math.floor(diff/1000)%60;
-
-},1000);
-
-
-
-
-/* WEATHER + PRESSURE */
-
-
-let lastPressure=null;
-
+let lastPressure=null
 
 async function updateWeather(){
+try{
+let res=await fetch("https://api.open-meteo.com/v1/forecast?latitude=53.45&longitude=-9.23&current_weather=true&hourly=surface_pressure")
+let data=await res.json()
+let w=data.current_weather
 
+tempEl.innerText=w.temperature+"°C"
+windSpeedEl.innerText=w.windspeed+" km/h"
+windDirEl.innerText=compass(w.winddirection)
 
-let res=await fetch(
+let p=data.hourly.surface_pressure?.[0]
+if(p){
+pressureEl.innerText=p+" hPa"
 
-"https://api.open-meteo.com/v1/forecast?latitude=53.45&longitude=-9.23&current_weather=true&hourly=surface_pressure"
-
-);
-
-
-let data=await res.json();
-
-
-let w=data.current_weather;
-
-
-weather-temp.innerText=w.temperature+"°C";
-
-wind-speed.innerText=w.windspeed+" km/h";
-
-
-wind-dir.innerText=
-
-compass(w.winddirection);
-
-
-
-/* pressure */
-
-
-let p=data.hourly.surface_pressure[0];
-
-pressure.innerText=p+" hPa";
-
-
-if(lastPressure){
-
-if(p>lastPressure)
-
-pressure-trend.innerText="⬆ Rising";
-
-else if(p<lastPressure)
-
-pressure-trend.innerText="⬇ Falling";
-
-else
-
-pressure-trend.innerText="→ Stable";
-
+if(lastPressure!==null){
+pressureTrendEl.innerText =
+p>lastPressure ? "⬆ Rising" :
+p<lastPressure ? "⬇ Falling" : "→ Stable"
+}
+lastPressure=p
+updateLure(w.temperature,w.windspeed,p)
+updateActivity(p)
+}
+}catch(e){console.log(e)}
 }
 
-lastPressure=p;
-
-
-
-updateLure(w.temperature,w.windspeed,p);
-
-updateActivity(p);
-
-
-}
-
-
-updateWeather();
-
-setInterval(updateWeather,600000);
-
-
-
+updateWeather()
+setInterval(updateWeather,600000)
 
 /* WATER */
 
-
 async function water(){
-
-
-let res=await fetch(
-
-"https://waterlevel.ie/hydro-data/api/Measurements?stationId=19002&numDays=1"
-
-);
-
-
-let data=await res.json();
-
-
-water-level.innerText=
-
-data.at(-1).value.toFixed(2)+"m";
-
-
+try{
+let res=await fetch("https://waterlevel.ie/hydro-data/api/Measurements?stationId=19002&numDays=1")
+let data=await res.json()
+if(data?.length)
+waterLevelEl.innerText=data.at(-1).value.toFixed(2)+" m"
+}catch(e){console.log(e)}
 }
 
-
-water();
-
-setInterval(water,600000);
-
-
-
+water()
+setInterval(water,600000)
 
 /* MOON */
 
-
 function moonPhase(){
-
-
-let lp=2551443;
-
-let now=new Date();
-
-let new_moon=new Date(1970,0,7);
-
-let phase=((now-new_moon)/1000)%lp;
-
-let index=Math.floor((phase/lp)*8);
-
-
-let phases=[
-
-"New","Waxing Crescent","Quarter",
-
-"Waxing Gibbous","Full 🌕",
-
-"Waning Gibbous","Last Quarter",
-
-"Waning Crescent"
-
-];
-
-
-moon.innerText=phases[index];
-
-
-feeding.innerText=
-
-(index==4||index==0)
-
-?"Excellent":"Good";
-
-
+let lp=2551443
+let phase=((Date.now()/1000)%lp)
+let index=Math.floor((phase/lp)*8)
+let phases=["New","Waxing Crescent","Quarter","Waxing Gibbous","Full 🌕","Waning Gibbous","Last Quarter","Waning Crescent"]
+moonEl.innerText=phases[index]
+feedingEl.innerText=(index==0||index==4)?"Excellent":"Good"
 }
-
-
-moonPhase();
-
-
-
+moonPhase()
 
 /* LURE */
 
-
-function updateLure(temp,wind,pressure){
-
-
-if(pressure<1005)
-
-lure.innerText="🔥 Big lures / jerkbaits";
-
-
-else if(temp<6)
-
-lure.innerText="Deadbait";
-
-
-else if(wind>15)
-
-lure.innerText="Spinnerbait";
-
-
-else
-
-lure.innerText="Soft plastic";
-
-
+function updateLure(t,w,p){
+lureEl.innerText =
+p<1005 ? "🔥 Big jerkbaits" :
+t<6 ? "Deadbait" :
+w>15 ? "Spinnerbait" :
+"Soft plastics"
 }
-
-
-
 
 /* ACTIVITY */
 
-
 function updateActivity(p){
-
-
-if(p<1000)
-
-activity.innerText="🔥 Excellent";
-
-
-else if(p<1015)
-
-activity.innerText="👍 Good";
-
-
-else
-
-activity.innerText="Slow";
-
-
+activityEl.innerText =
+p<1000 ? "🔥 Excellent" :
+p<1015 ? "👍 Good" :
+"Slow"
 }
-
-
-
 
 /* COMPASS */
 
-
 function compass(d){
-
-return["N","NE","E","SE","S","SW","W","NW"]
-
-[Math.round(d/45)%8];
-
+return ["N","NE","E","SE","S","SW","W","NW"][Math.round(d/45)%8]
 }
-
-
-
 
 /* SOUND */
 
+const sound=el("sound")
+const audioBtn=el("audioBtn")
+sound.volume=0.4
+let playing=false
 
-let sound=document.getElementById("sound");
-
-sound.volume=0.4;
-
-let playing=false;
-
-
-audio.onclick=async()=>{
-
-if(!playing){
-
-await sound.play();
-
-playing=true;
-
+audioBtn.onclick=async()=>{
+if(!playing){await sound.play();playing=true}
+else{sound.pause();playing=false}
 }
 
-else{
-
-sound.pause();
-
-playing=false;
-
-}
-
-};
-
-
-});
-
-
+})
 </script>
 
 </body>
