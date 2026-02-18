@@ -227,15 +227,19 @@ el("water-level").innerText="Error"
 water()
 setInterval(water,600000)
 
-/* TRAVEL — serverless */
+/* TRAVEL — serverless (FIXED PARSING) */
 
 async function travel(){
 try{
 let r=await fetch("/.netlify/functions/travel")
 let j=await r.json()
-let sec=j.routes[0].duration
-let mins=Math.round(sec/60)
-el("travel").innerText=mins+" mins (live traffic)"
+
+// duration is a string like "1234s"
+let durStr = j.routes[0].duration || "0s"
+let sec = parseInt(durStr.replace("s",""),10)
+let mins = Math.round(sec/60)
+
+el("travel").innerText = mins + " mins (live traffic)"
 }catch{
 el("travel").innerText="Travel error"
 }
