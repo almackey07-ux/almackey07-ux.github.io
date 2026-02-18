@@ -6,12 +6,7 @@
 <title>Pike Fishing Trip - Lough Corrib</title>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Segoe UI',sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
 
 body{
 color:white;
@@ -41,20 +36,12 @@ background:rgba(255,255,255,0.12);
 padding:18px;
 border-radius:14px;
 min-width:90px;
-box-shadow:0 6px 18px rgba(0,0,0,0.35);
 }
 
-.tile .num{
-font-size:28px;
-font-weight:700;
-}
+.tile .num{font-size:28px;font-weight:700;}
+.tile .label{font-size:13px;opacity:.8;}
 
-.tile .label{
-font-size:13px;
-opacity:.8;
-}
-
-.weather-row{
+.row{
 display:flex;
 justify-content:center;
 gap:12px;
@@ -62,15 +49,8 @@ flex-wrap:wrap;
 margin-top:8px;
 }
 
-.checklist{
-text-align:left;
-display:inline-block;
-}
-
-.checklist label{
-display:block;
-margin:6px 0;
-}
+.checklist{text-align:left;display:inline-block;font-size:16px;}
+.checklist label{display:block;margin:8px 0;cursor:pointer;}
 
 .audio-toggle{
 margin-top:18px;
@@ -78,34 +58,29 @@ cursor:pointer;
 color:#a5d6a7;
 font-size:18px;
 }
-
-.small{
-opacity:.85;
-font-size:14px;
-}
 </style>
 </head>
 
 <body>
 
 <h1>🎣 Pike Fishing Trip – Lough Corrib 🇮🇪</h1>
-<h2 class="small">Leaving 7th March at 5:00 AM</h2>
+<h2>Leaving 7th March at 5:00 AM</h2>
 
 <!-- COUNTDOWN -->
 <div class="section">
 <div class="countdown">
-<div class="tile"><div class="num" id="days">0</div><div class="label">Days</div></div>
-<div class="tile"><div class="num" id="hours">0</div><div class="label">Hours</div></div>
-<div class="tile"><div class="num" id="minutes">0</div><div class="label">Minutes</div></div>
-<div class="tile"><div class="num" id="seconds">0</div><div class="label">Seconds</div></div>
+<div class="tile"><div id="days" class="num">0</div><div class="label">Days</div></div>
+<div class="tile"><div id="hours" class="num">0</div><div class="label">Hours</div></div>
+<div class="tile"><div id="minutes" class="num">0</div><div class="label">Minutes</div></div>
+<div class="tile"><div id="seconds" class="num">0</div><div class="label">Seconds</div></div>
 </div>
 </div>
 
 <!-- WEATHER -->
 <div class="section">
-<h3>🌦 Lough Corrib Weather</h3>
-<div class="weather-row">
-<span id="weather-temp">--°C</span>
+<h3>🌦 Weather</h3>
+<div class="row">
+<span id="weather-temp"></span>
 <span id="wind-speed"></span>
 <span id="wind-dir"></span>
 </div>
@@ -114,180 +89,170 @@ font-size:14px;
 <!-- CONDITIONS -->
 <div class="section">
 <h3>🎯 Pike Conditions</h3>
-
-<div class="weather-row">🌊 Level: <span id="water-level">--</span></div>
-<div class="weather-row">🌡 Pressure: <span id="pressure">--</span> <span id="pressure-trend"></span></div>
-<div class="weather-row">🌙 Moon: <span id="moon"></span></div>
-<div class="weather-row">🐊 Feeding: <span id="feeding"></span></div>
-<div class="weather-row">🎣 Lure: <span id="lure"></span></div>
-<div class="weather-row">🔥 Activity: <span id="activity"></span></div>
-
+<div class="row">🌊 Level: <span id="water-level">Loading…</span></div>
+<div class="row">🌡 Pressure: <span id="pressure"></span> <span id="pressure-trend"></span></div>
+<div class="row">🌙 Moon: <span id="moon"></span></div>
+<div class="row">🐊 Feeding: <span id="feeding"></span></div>
+<div class="row">🎣 Lure: <span id="lure"></span></div>
+<div class="row">🔥 Activity: <span id="activity"></span></div>
 </div>
 
-<!-- CHECKLIST -->
+<!-- PACK LIST -->
 <div class="section">
-<h3>🧰 Who's Bringing What</h3>
+<h3>🎒 Pack List</h3>
 <div class="checklist">
-<label><input type="checkbox"> Rods</label>
-<label><input type="checkbox"> Deadbait</label>
+<label><input type="checkbox"> Beers 🍺</label>
+<label><input type="checkbox"> Deadbait Rod</label>
+<label><input type="checkbox"> Lure Rod</label>
+<label><input type="checkbox"> Life Jacket</label>
 <label><input type="checkbox"> Lures</label>
-<label><input type="checkbox"> Landing Net</label>
-<label><input type="checkbox"> Life Jackets</label>
-<label><input type="checkbox"> Flasks ☕</label>
+<label><input type="checkbox"> Net</label>
+<label><input type="checkbox"> Deadbaits</label>
+<label><input type="checkbox"> Waders</label>
+<label><input type="checkbox"> Waterproof Jacket</label>
+<label><input type="checkbox"> Signed Permission Slip</label>
 </div>
 </div>
 
-<!-- LEADERBOARD -->
-<div class="section">
-<h3>🏆 Who Will Reign As King Of The Corrib?</h3>
-<div>🥇 Al</div>
-<div>🥈 Keiran 👑</div>
-<div>🥉 Heno</div>
-</div>
-
-<p class="small">Early start. Big pike. Tight lines. 🐊</p>
-
-<!-- SOUND -->
-<audio id="sound" loop preload="auto">
+<audio id="lakeSound" loop preload="auto">
 <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3">
 </audio>
 
-<div class="audio-toggle" id="audioBtn">🔊 Toggle Ambient Sounds</div>
+<div class="audio-toggle" id="soundBtn">🔊 Enable Lake Sounds</div>
 
 <script>
-document.addEventListener("DOMContentLoaded",()=>{
-
 const el=id=>document.getElementById(id)
-
-const daysEl=el("days")
-const hoursEl=el("hours")
-const minutesEl=el("minutes")
-const secondsEl=el("seconds")
-
-const tempEl=el("weather-temp")
-const windSpeedEl=el("wind-speed")
-const windDirEl=el("wind-dir")
-const waterLevelEl=el("water-level")
-const pressureEl=el("pressure")
-const pressureTrendEl=el("pressure-trend")
-const moonEl=el("moon")
-const feedingEl=el("feeding")
-const lureEl=el("lure")
-const activityEl=el("activity")
 
 /* COUNTDOWN */
 
 const trip=new Date("2026-03-07T05:00:00")
-
-function updateCountdown(){
-let diff=trip-new Date()
-if(diff<0) diff=0
-daysEl.innerText=Math.floor(diff/86400000)
-hoursEl.innerText=Math.floor(diff/3600000)%24
-minutesEl.innerText=Math.floor(diff/60000)%60
-secondsEl.innerText=Math.floor(diff/1000)%60
+function tick(){
+let d=trip-new Date()
+if(d<0)d=0
+el("days").innerText=Math.floor(d/86400000)
+el("hours").innerText=Math.floor(d/3600000)%24
+el("minutes").innerText=Math.floor(d/60000)%60
+el("seconds").innerText=Math.floor(d/1000)%60
 }
-
-updateCountdown()
-setInterval(updateCountdown,1000)
+tick()
+setInterval(tick,1000)
 
 /* WEATHER */
 
 let lastPressure=null
 
-async function updateWeather(){
+async function weather(){
 try{
-let res=await fetch("https://api.open-meteo.com/v1/forecast?latitude=53.45&longitude=-9.23&current_weather=true&hourly=surface_pressure")
-let data=await res.json()
-let w=data.current_weather
+let r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=53.45&longitude=-9.23&current_weather=true&hourly=surface_pressure")
+let j=await r.json()
+let w=j.current_weather
 
-tempEl.innerText=w.temperature+"°C"
-windSpeedEl.innerText=w.windspeed+" km/h"
-windDirEl.innerText=compass(w.winddirection)
+el("weather-temp").innerText=w.temperature+"°C"
+el("wind-speed").innerText=w.windspeed+" km/h"
+el("wind-dir").innerText=compass(w.winddirection)
 
-let p=data.hourly.surface_pressure?.[0]
-if(p){
-pressureEl.innerText=p+" hPa"
+let p=j.hourly.surface_pressure[0]
+el("pressure").innerText=p+" hPa"
 
 if(lastPressure!==null){
-pressureTrendEl.innerText =
-p>lastPressure ? "⬆ Rising" :
-p<lastPressure ? "⬇ Falling" : "→ Stable"
+el("pressure-trend").innerText=p>lastPressure?"⬆":"⬇"
 }
 lastPressure=p
+
 updateLure(w.temperature,w.windspeed,p)
 updateActivity(p)
-}
-}catch(e){console.log(e)}
-}
 
-updateWeather()
-setInterval(updateWeather,600000)
+}catch(e){
+console.log("weather fail",e)
+}
+}
+weather()
+setInterval(weather,600000)
 
-/* WATER */
+/* WATER LEVEL — FIXED WITH CORS PROXY */
 
 async function water(){
 try{
-let res=await fetch("https://waterlevel.ie/hydro-data/api/Measurements?stationId=19002&numDays=1")
-let data=await res.json()
-if(data?.length)
-waterLevelEl.innerText=data.at(-1).value.toFixed(2)+" m"
-}catch(e){console.log(e)}
+const target="https://waterlevel.ie/hydro-data/api/Measurements?stationIdIerationId=19002&numDays=1"
+const proxy="https://api.allorigins.win/raw?url="+encodeURIComponent(target)
+
+const r=await fetch(proxy,{cache:"no-store"})
+const j=await r.json()
+
+if(j && j.length){
+el("water-level").innerText=j.at(-1).value.toFixed(2)+" m"
+}else{
+el("water-level").innerText="Unavailable"
 }
 
+}catch(e){
+console.log("water fail",e)
+el("water-level").innerText="Unavailable"
+}
+}
 water()
 setInterval(water,600000)
 
 /* MOON */
 
-function moonPhase(){
+function moon(){
 let lp=2551443
 let phase=((Date.now()/1000)%lp)
-let index=Math.floor((phase/lp)*8)
-let phases=["New","Waxing Crescent","Quarter","Waxing Gibbous","Full 🌕","Waning Gibbous","Last Quarter","Waning Crescent"]
-moonEl.innerText=phases[index]
-feedingEl.innerText=(index==0||index==4)?"Excellent":"Good"
+let i=Math.floor((phase/lp)*8)
+let p=["New","Waxing","Quarter","Gibbous","Full 🌕","Waning","Last Q","Crescent"]
+el("moon").innerText=p[i]
+el("feeding").innerText=(i==0||i==4)?"Excellent":"Good"
 }
-moonPhase()
+moon()
 
 /* LURE */
 
 function updateLure(t,w,p){
-lureEl.innerText =
-p<1005 ? "🔥 Big jerkbaits" :
-t<6 ? "Deadbait" :
-w>15 ? "Spinnerbait" :
+el("lure").innerText=
+p<1005?"🔥 Big jerkbaits":
+t<6?"Deadbait":
+w>15?"Spinnerbait":
 "Soft plastics"
 }
 
 /* ACTIVITY */
 
 function updateActivity(p){
-activityEl.innerText =
-p<1000 ? "🔥 Excellent" :
-p<1015 ? "👍 Good" :
+el("activity").innerText=
+p<1000?"🔥 Excellent":
+p<1015?"👍 Good":
 "Slow"
 }
 
 /* COMPASS */
 
 function compass(d){
-return ["N","NE","E","SE","S","SW","W","NW"][Math.round(d/45)%8]
+return["N","NE","E","SE","S","SW","W","NW"][Math.round(d/45)%8]
 }
 
-/* SOUND */
+/* SOUND TOGGLE — FIXED */
 
-const sound=el("sound")
-const audioBtn=el("audioBtn")
-sound.volume=0.4
-let playing=false
+const sound=el("lakeSound")
+const btn=el("soundBtn")
+sound.volume=.4
+let on=false
 
-audioBtn.onclick=async()=>{
-if(!playing){await sound.play();playing=true}
-else{sound.pause();playing=false}
+btn.addEventListener("click",async()=>{
+try{
+if(!on){
+await sound.play()
+btn.innerText="🔊 Lake Sounds ON"
+on=true
+}else{
+sound.pause()
+btn.innerText="🔈 Lake Sounds OFF"
+on=false
 }
-
+}catch(e){
+alert("Tap again — browser blocked first play attempt")
+}
 })
+
 </script>
 
 </body>
