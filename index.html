@@ -3,10 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Pike Fishing Trip - Lough Corrib</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
 
 body{
 color:white;
@@ -16,7 +22,7 @@ background:linear-gradient(#2c5364,#203a43,#0f2027);
 }
 
 .section{
-margin:22px 0;
+margin:25px 0;
 padding:20px;
 background:rgba(255,255,255,0.08);
 border-radius:18px;
@@ -36,10 +42,18 @@ background:rgba(255,255,255,0.12);
 padding:18px;
 border-radius:14px;
 min-width:90px;
+box-shadow:0 6px 18px rgba(0,0,0,0.35);
 }
 
-.tile .num{font-size:28px;font-weight:700;}
-.tile .label{font-size:13px;opacity:.8;}
+.tile .num{
+font-size:28px;
+font-weight:700;
+}
+
+.tile .label{
+font-size:13px;
+opacity:.8;
+}
 
 .row{
 display:flex;
@@ -49,8 +63,17 @@ flex-wrap:wrap;
 margin-top:8px;
 }
 
-.checklist{text-align:left;display:inline-block;font-size:16px;}
-.checklist label{display:block;margin:8px 0;cursor:pointer;}
+.checklist{
+text-align:left;
+display:inline-block;
+font-size:16px;
+}
+
+.checklist label{
+display:block;
+margin:8px 0;
+cursor:pointer;
+}
 
 .audio-toggle{
 margin-top:18px;
@@ -69,10 +92,10 @@ font-size:18px;
 <!-- COUNTDOWN -->
 <div class="section">
 <div class="countdown">
-<div class="tile"><div id="days" class="num">0</div><div class="label">Days</div></div>
-<div class="tile"><div id="hours" class="num">0</div><div class="label">Hours</div></div>
-<div class="tile"><div id="minutes" class="num">0</div><div class="label">Minutes</div></div>
-<div class="tile"><div id="seconds" class="num">0</div><div class="label">Seconds</div></div>
+<div class="tile"><div class="num" id="days">0</div><div class="label">Days</div></div>
+<div class="tile"><div class="num" id="hours">0</div><div class="label">Hours</div></div>
+<div class="tile"><div class="num" id="minutes">0</div><div class="label">Minutes</div></div>
+<div class="tile"><div class="num" id="seconds">0</div><div class="label">Seconds</div></div>
 </div>
 </div>
 
@@ -89,12 +112,23 @@ font-size:18px;
 <!-- CONDITIONS -->
 <div class="section">
 <h3>🎯 Pike Conditions</h3>
-<div class="row">🌊 Level: <span id="water-level">Loading…</span></div>
+
+<div class="row">🌊 Water Level: <span id="water-level">Loading…</span></div>
 <div class="row">🌡 Pressure: <span id="pressure"></span> <span id="pressure-trend"></span></div>
 <div class="row">🌙 Moon: <span id="moon"></span></div>
 <div class="row">🐊 Feeding: <span id="feeding"></span></div>
 <div class="row">🎣 Lure: <span id="lure"></span></div>
 <div class="row">🔥 Activity: <span id="activity"></span></div>
+
+</div>
+
+<!-- TRAVEL -->
+<div class="section">
+<h3>🚗 Live Travel Time</h3>
+<div id="travel">Loading…</div>
+<div style="opacity:.8;margin-top:6px">
+Brookfield Park Rathnew → Cianlea Swords → Birchall Lodge
+</div>
 </div>
 
 <!-- PACK LIST -->
@@ -114,11 +148,19 @@ font-size:18px;
 </div>
 </div>
 
-<audio id="lakeSound" loop preload="auto">
+<!-- LEADERBOARD -->
+<div class="section">
+<h3>🏆 Corrib Crown Watch</h3>
+<div>🥇 Al</div>
+<div>🥈 Keiran 👑</div>
+<div>🥉 Heno</div>
+</div>
+
+<div class="audio-toggle" id="soundBtn">🔊 Toggle Lake Sounds</div>
+
+<audio id="lakeSound" loop>
 <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3">
 </audio>
-
-<div class="audio-toggle" id="soundBtn">🔊 Enable Lake Sounds</div>
 
 <script>
 const el=id=>document.getElementById(id)
@@ -126,6 +168,7 @@ const el=id=>document.getElementById(id)
 /* COUNTDOWN */
 
 const trip=new Date("2026-03-07T05:00:00")
+
 function tick(){
 let d=trip-new Date()
 if(d<0)d=0
@@ -142,63 +185,69 @@ setInterval(tick,1000)
 let lastPressure=null
 
 async function weather(){
-try{
 let r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=53.45&longitude=-9.23&current_weather=true&hourly=surface_pressure")
 let j=await r.json()
 let w=j.current_weather
 
 el("weather-temp").innerText=w.temperature+"°C"
 el("wind-speed").innerText=w.windspeed+" km/h"
-el("wind-dir").innerText=compass(w.winddirection)
+el("wind-dir").innerText=["N","NE","E","SE","S","SW","W","NW"][Math.round(w.winddirection/45)%8]
 
 let p=j.hourly.surface_pressure[0]
 el("pressure").innerText=p+" hPa"
 
 if(lastPressure!==null){
-el("pressure-trend").innerText=p>lastPressure?"⬆":"⬇"
+el("pressure-trend").innerText =
+p>lastPressure?"⬆ Rising":
+p<lastPressure?"⬇ Falling":"→ Stable"
 }
 lastPressure=p
 
 updateLure(w.temperature,w.windspeed,p)
 updateActivity(p)
-
-}catch(e){
-console.log("weather fail",e)
-}
 }
 weather()
 setInterval(weather,600000)
 
-/* WATER LEVEL — FIXED WITH CORS PROXY */
+/* WATER — serverless */
 
 async function water(){
 try{
-const target="https://waterlevel.ie/hydro-data/api/Measurements?stationIdIerationId=19002&numDays=1"
-const proxy="https://api.allorigins.win/raw?url="+encodeURIComponent(target)
-
-const r=await fetch(proxy,{cache:"no-store"})
-const j=await r.json()
-
-if(j && j.length){
+let r=await fetch("/.netlify/functions/water")
+let j=await r.json()
+if(j?.length){
 el("water-level").innerText=j.at(-1).value.toFixed(2)+" m"
 }else{
-el("water-level").innerText="Unavailable"
+el("water-level").innerText="No data"
 }
-
-}catch(e){
-console.log("water fail",e)
-el("water-level").innerText="Unavailable"
+}catch{
+el("water-level").innerText="Error"
 }
 }
 water()
 setInterval(water,600000)
 
+/* TRAVEL — serverless */
+
+async function travel(){
+try{
+let r=await fetch("/.netlify/functions/travel")
+let j=await r.json()
+let sec=j.routes[0].duration
+let mins=Math.round(sec/60)
+el("travel").innerText=mins+" mins (live traffic)"
+}catch{
+el("travel").innerText="Travel error"
+}
+}
+travel()
+setInterval(travel,300000)
+
 /* MOON */
 
 function moon(){
 let lp=2551443
-let phase=((Date.now()/1000)%lp)
-let i=Math.floor((phase/lp)*8)
+let i=Math.floor(((Date.now()/1000)%lp)/lp*8)
 let p=["New","Waxing","Quarter","Gibbous","Full 🌕","Waning","Last Q","Crescent"]
 el("moon").innerText=p[i]
 el("feeding").innerText=(i==0||i==4)?"Excellent":"Good"
@@ -224,35 +273,21 @@ p<1015?"👍 Good":
 "Slow"
 }
 
-/* COMPASS */
-
-function compass(d){
-return["N","NE","E","SE","S","SW","W","NW"][Math.round(d/45)%8]
-}
-
-/* SOUND TOGGLE — FIXED */
+/* SOUND — fixed */
 
 const sound=el("lakeSound")
-const btn=el("soundBtn")
 sound.volume=.4
-let on=false
+let playing=false
 
-btn.addEventListener("click",async()=>{
-try{
-if(!on){
-await sound.play()
-btn.innerText="🔊 Lake Sounds ON"
-on=true
+el("soundBtn").onclick=async()=>{
+if(!playing){
+await sound.play().catch(()=>{})
+playing=true
 }else{
 sound.pause()
-btn.innerText="🔈 Lake Sounds OFF"
-on=false
+playing=false
 }
-}catch(e){
-alert("Tap again — browser blocked first play attempt")
 }
-})
-
 </script>
 
 </body>
