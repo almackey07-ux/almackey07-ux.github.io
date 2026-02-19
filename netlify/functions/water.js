@@ -1,7 +1,7 @@
 exports.handler = async () => {
   try {
     const r = await fetch(
-      "https://waterlevel.ie/hydro-data/api/Measurements?stationId=19002&numDays=1",
+      "https://waterlevel.ie/hydro-data/api/stations/19002/measurements?days=1",
       {
         headers: {
           "Accept": "application/json",
