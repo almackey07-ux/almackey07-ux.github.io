@@ -1,279 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Pike Fishing Trip - Lough Corrib</title>
-
-<style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Segoe UI',sans-serif;
-}
-
-body{
-  color:white;
-  text-align:center;
-  padding:20px;
-  background:linear-gradient(#2c5364,#203a43,#0f2027);
-}
-
-.section{
-  margin:25px 0;
-  padding:20px;
-  background:rgba(255,255,255,0.08);
-  border-radius:18px;
-  box-shadow:0 8px 25px rgba(0,0,0,0.35);
-  backdrop-filter:blur(6px);
-}
-
-.countdown{
-  display:flex;
-  justify-content:center;
-  gap:14px;
-  flex-wrap:wrap;
-}
-
-.tile{
-  background:rgba(255,255,255,0.12);
-  padding:18px;
-  border-radius:14px;
-  min-width:90px;
-  box-shadow:0 6px 18px rgba(0,0,0,0.35);
-}
-
-.tile .num{
-  font-size:28px;
-  font-weight:700;
-}
-
-.tile .label{
-  font-size:13px;
-  opacity:.8;
-}
-
-.row{
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-top:8px;
-}
-
-.checklist{
-  text-align:left;
-  display:inline-block;
-  font-size:16px;
-}
-
-.checklist label{
-  display:block;
-  margin:8px 0;
-  cursor:pointer;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pike Fishing Trip</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+    h1, h2 {
+      margin-top: 0;
+    }
+    .card {
+      background: #222;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+    }
+    .label {
+      font-weight: bold;
+      color: #4fc3f7;
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>🎣 Pike Fishing Trip – Lough Corrib 🇮🇪</h1>
-<h2>Leaving 7th March at 5:00 AM</h2>
+  <h1>Pike Fishing Trip Dashboard</h1>
 
-<!-- COUNTDOWN -->
-<div class="section">
-  <div class="countdown">
-    <div class="tile"><div class="num" id="days">0</div><div class="label">Days</div></div>
-    <div class="tile"><div class="num" id="hours">0</div><div class="label">Hours</div></div>
-    <div class="tile"><div class="num" id="minutes">0</div><div class="label">Minutes</div></div>
-    <div class="tile"><div class="num" id="seconds">0</div><div class="label">Seconds</div></div>
+  <!-- WEATHER -->
+  <div class="card">
+    <h2>Weather</h2>
+    <div><span class="label">Temperature:</span> <span id="temp">Loading...</span></div>
+    <div><span class="label">Wind:</span> <span id="wind">Loading...</span></div>
   </div>
-</div>
 
-<!-- WEATHER -->
-<div class="section">
-  <h3>🌦 Weather</h3>
-  <div class="row">
-    <span id="weather-temp"></span>
-    <span id="wind-speed"></span>
-    <span id="wind-dir"></span>
+  <!-- PIKE CONDITIONS -->
+  <div class="card">
+    <h2>Pike Conditions</h2>
+    <div><span class="label">Water Level:</span> <span id="water">Loading...</span></div>
+    <div><span class="label">Pressure:</span> <span id="pressure">Loading...</span></div>
+    <div><span class="label">Moon:</span> <span id="moon">Loading...</span></div>
+    <div><span class="label">Feeding:</span> <span id="feeding">Loading...</span></div>
+    <div><span class="label">Lure:</span> <span id="lure">Loading...</span></div>
+    <div><span class="label">Activity:</span> <span id="activity">Loading...</span></div>
   </div>
-</div>
 
-<!-- CONDITIONS -->
-<div class="section">
-  <h3>🎯 Pike Conditions</h3>
-
-  <div class="row">🌊 Water Level: <span id="water-level">Loading…</span></div>
-  <div class="row">🌡 Pressure: <span id="pressure"></span> <span id="pressure-trend"></span></div>
-  <div class="row">🌙 Moon: <span id="moon"></span></div>
-  <div class="row">🐊 Feeding: <span id="feeding"></span></div>
-  <div class="row">🎣 Lure: <span id="lure"></span></div>
-  <div class="row">🔥 Activity: <span id="activity"></span></div>
-
-</div>
-
-<!-- TRAVEL -->
-<div class="section">
-  <h3>🚗 Live Travel Time</h3>
-  <div id="travel">Loading…</div>
-  <div style="opacity:.8;margin-top:6px">
-    Brookfield Park Rathnew → Cianlea Swords → Birchall Lodge
+  <!-- TRAVEL -->
+  <div class="card">
+    <h2>Live Travel Time</h2>
+    <div id="travel">Loading...</div>
   </div>
-</div>
 
-<!-- PACK LIST -->
-<div class="section">
-  <h3>🎒 Pack List</h3>
-  <div class="checklist">
-    <label><input type="checkbox"> Beers 🍺</label>
-    <label><input type="checkbox"> Deadbait Rod</label>
-    <label><input type="checkbox"> Lure Rod</label>
-    <label><input type="checkbox"> Life Jacket</label>
-    <label><input type="checkbox"> Lures</label>
-    <label><input type="checkbox"> Net</label>
-    <label><input type="checkbox"> Deadbaits</label>
-    <label><input type="checkbox"> Waders</label>
-    <label><input type="checkbox"> Waterproof Jacket</label>
-    <label><input type="checkbox"> Signed Permission Slip</label>
+  <!-- PACK LIST -->
+  <div class="card">
+    <h2>Pack List</h2>
+    <ul>
+      <li>Beers 🍺</li>
+      <li>Deadbait Rod</li>
+      <li>Lure Rod</li>
+    </ul>
   </div>
-</div>
-
-<!-- LEADERBOARD -->
-<div class="section">
-  <h3>🏆 Corrib Crown Watch</h3>
-  <div>🥇 Al</div>
-  <div>🥈 Keiran 👑</div>
-  <div>🥉 Heno</div>
-</div>
 
 <script>
-const el=id=>document.getElementById(id)
-
-/* COUNTDOWN */
-const trip=new Date("2026-03-07T05:00:00")
-function tick(){
-  let d=trip-new Date()
-  if(d<0)d=0
-  el("days").innerText=Math.floor(d/86400000)
-  el("hours").innerText=Math.floor(d/3600000)%24
-  el("minutes").innerText=Math.floor(d/60000)%60
-  el("seconds").innerText=Math.floor(d/1000)%60
-}
-tick()
-setInterval(tick,1000)
-
-/* WEATHER */
-let lastPressure=null
-async function weather(){
-  let r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=53.45&longitude=-9.23&current_weather=true&hourly=surface_pressure")
-  let j=await r.json()
-  let w=j.current_weather
-
-  el("weather-temp").innerText=w.temperature+"°C"
-  el("wind-speed").innerText=w.windspeed+" km/h"
-  el("wind-dir").innerText=["N","NE","E","SE","S","SW","W","NW"][Math.round(w.winddirection/45)%8]
-
-  let p=j.hourly.surface_pressure[0]
-  el("pressure").innerText=p+" hPa"
-
-  if(lastPressure!==null){
-    el("pressure-trend").innerText =
-      p>lastPressure?"⬆ Rising":
-      p<lastPressure?"⬇ Falling":"→ Stable"
-  }
-  lastPressure=p
-
-  updateLure(w.temperature,w.windspeed,p)
-  updateActivity(p)
-}
-weather()
-setInterval(weather,600000)
-
-/* WATER */
-async function water(){
-  try{
-    let r=await fetch("/.netlify/functions/water")
-    let j=await r.json()
-
-    if(Array.isArray(j) && j.length){
-      el("water-level").innerText = j.at(-1).value.toFixed(2)+" m"
-    } else {
-      el("water-level").innerText = "No data"
+  // WEATHER API (Open-Meteo)
+  async function loadWeather() {
+    try {
+      const r = await fetch("https://api.open-meteo.com/v1/forecast?latitude=53.2&longitude=-6.1&current_weather=true");
+      const data = await r.json();
+      document.getElementById("temp").textContent = data.current_weather.temperature + "°C";
+      document.getElementById("wind").textContent = data.current_weather.windspeed + " km/h";
+    } catch {
+      document.getElementById("temp").textContent = "Error";
+      document.getElementById("wind").textContent = "Error";
     }
-  }catch(e){
-    el("water-level").innerText="Error"
   }
-}
-water()
-setInterval(water,600000)
 
-/* FORMAT DURATION */
-function formatDuration(d){
-  const sec=parseInt(d.replace("s",""))
-  const h=Math.floor(sec/3600)
-  const m=Math.floor((sec%3600)/60)
-  return `${h}h ${m}m`
-}
+  // WATER LEVEL (Cloudflare Function)
+  async function loadWater() {
+    try {
+      const r = await fetch("/functions/water");
+      const data = await r.json();
 
-/* TRAVEL */
-async function travel(){
-  try{
-    let r=await fetch("/.netlify/functions/travel")
-    let j=await r.json()
+      if (!data || !data[0]) {
+        document.getElementById("water").textContent = "Error";
+        return;
+      }
 
-    const route=j.routes?.[0]
-    if(!route){
-      el("travel").innerText="No route"
-      return
+      document.getElementById("water").textContent = data[0].value + "m";
+    } catch {
+      document.getElementById("water").textContent = "Error";
     }
-
-    const total=formatDuration(route.duration)
-
-    let legs=""
-    route.legs.forEach((leg,i)=>{
-      legs+=`Leg ${i+1}: ${formatDuration(leg.duration)}<br>`
-    })
-
-    el("travel").innerHTML = `
-      <strong>Total:</strong> ${total}<br>
-      ${legs}
-    `
-  }catch(e){
-    el("travel").innerText="Travel error"
   }
-}
-travel()
-setInterval(travel,300000)
 
-/* MOON */
-function moon(){
-  let lp=2551443
-  let i=Math.floor(((Date.now()/1000)%lp)/lp*8)
-  let p=["New","Waxing","Quarter","Gibbous","Full 🌕","Waning","Last Q","Crescent"]
-  el("moon").innerText=p[i]
-  el("feeding").innerText=(i==0||i==4)?"Excellent":"Good"
-}
-moon()
+  // TRAVEL TIME (Cloudflare Function)
+  async function loadTravel() {
+    try {
+      const r = await fetch("/functions/travel");
+      const data = await r.json();
 
-/* LURE */
-function updateLure(t,w,p){
-  el("lure").innerText=
-    p<1005?"🔥 Big jerkbaits":
-    t<6?"Deadbait":
-    w>15?"Spinnerbait":
-    "Soft plastics"
-}
+      if (!data.routes || !data.routes[0]) {
+        document.getElementById("travel").textContent = "Travel error";
+        return;
+      }
 
-/* ACTIVITY */
-function updateActivity(p){
-  el("activity").innerText=
-    p<1000?"🔥 Excellent":
-    p<1015?"👍 Good":
-    "Slow"
-}
+      const duration = data.routes[0].duration;
+      document.getElementById("travel").textContent = "Travel time: " + duration;
+    } catch {
+      document.getElementById("travel").textContent = "Travel error";
+    }
+  }
+
+  // STATIC CONDITIONS
+  function loadStatic() {
+    document.getElementById("pressure").textContent = "993.4 hPa";
+    document.getElementById("moon").textContent = "Quarter";
+    document.getElementById("feeding").textContent = "Good";
+    document.getElementById("lure").textContent = "Big jerkbaits";
+    document.getElementById("activity").textContent = "Excellent";
+  }
+
+  // INIT
+  loadWeather();
+  loadWater();
+  loadTravel();
+  loadStatic();
 </script>
 
 </body>
