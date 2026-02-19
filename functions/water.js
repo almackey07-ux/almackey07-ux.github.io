@@ -22,7 +22,9 @@ export async function onRequest() {
 
     const data = await r.json();
 
-    return new Response(JSON.stringify(data), {
+    const latest = data.measurements?.[0] || null;
+
+    return new Response(JSON.stringify(latest), {
       headers: { "Content-Type": "application/json" }
     });
 
