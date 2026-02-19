@@ -83,15 +83,15 @@
   // WATER LEVEL (Cloudflare Function)
   async function loadWater() {
     try {
-      const r = await fetch("/functions/water");
+      const r = await fetch("/water");
       const data = await r.json();
 
-      if (!data || !data[0]) {
+      if (!data || !data.value) {
         document.getElementById("water").textContent = "Error";
         return;
       }
 
-      document.getElementById("water").textContent = data[0].value + "m";
+      document.getElementById("water").textContent = data.value + "m";
     } catch {
       document.getElementById("water").textContent = "Error";
     }
@@ -100,7 +100,7 @@
   // TRAVEL TIME (Cloudflare Function)
   async function loadTravel() {
     try {
-      const r = await fetch("/functions/travel");
+      const r = await fetch("/travel");
       const data = await r.json();
 
       if (!data.routes || !data.routes[0]) {
