@@ -1,4 +1,4 @@
-exports.handler = async () => {
+export async function onRequest(context) {
   try {
     const requestBody = {
       origin: { address: "Brookfield Park Rathnew" },
@@ -15,7 +15,7 @@ exports.handler = async () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-Goog-Api-Key": process.env.GMAPS_KEY,
+          "X-Goog-Api-Key": context.env.GMAPS_KEY,
           "X-Goog-FieldMask":
             "routes.duration,routes.distanceMeters,routes.legs.duration,routes.legs.distanceMeters"
         },
@@ -25,14 +25,14 @@ exports.handler = async () => {
 
     const data = await response.json();
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(data)
-    };
+    return new Response(JSON.stringify(data), {
+      headers: { "Content-Type": "application/json" }
+    });
+
   } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Exception", details: String(err) })
-    };
+    return new Response(
+      JSON.stringify({ error: "Exception", details: String(err) }),
+      { status: 500 }
+    );
   }
-};
+}
