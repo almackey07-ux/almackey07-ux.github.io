@@ -1,15 +1,11 @@
-exports.handler = async (event, context) => {
+exports.handler = async () => {
   try {
-    const body = JSON.parse(event.body || "{}");
-
-    const origin = body.origin;
-    const destination = body.destination;
-    const waypoints = body.waypoints || [];
-
     const requestBody = {
-      origin: { address: origin },
-      destination: { address: destination },
-      intermediates: waypoints.map(w => ({ address: w })),
+      origin: { address: "Brookfield Park Rathnew" },
+      destination: { address: "Birchall Lodge" },
+      intermediates: [
+        { address: "Cianlea Swords" }
+      ],
       travelMode: "DRIVE"
     };
 
