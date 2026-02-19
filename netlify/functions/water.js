@@ -1,24 +1,22 @@
-// netlify/functions/water.js
-
-exports.handler = async function (event, context) {
+exports.handler = async () => {
   try {
-    const url = "https://waterlevel.ie/hydro-data/api/Measurements?stationId=19002&numDays=1";
-
-    const r = await fetch(url, {
-      headers: {
-        "Accept": "application/json"
+    const r = await fetch(
+      "https://waterlevel.ie/hydro-data/api/Measurements?stationId=19002&numDays=1",
+      {
+        headers: {
+          "Accept": "application/json",
+          "User-Agent": "NetlifyFunction/1.0"
+        }
       }
-    });
+    );
 
     if (!r.ok) {
-      const text = await r.text();
       return {
         statusCode: r.status,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ error: "water fetch failed", details: text })
+        body: JSON.stringify({
+          error: "Fetch failed",
+          details: await r.text()
+        })
       };
     }
 
@@ -26,21 +24,12 @@ exports.handler = async function (event, context) {
 
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json"
-      },
       body: JSON.stringify(data)
     };
-
-  } catch (e) {
+  } catch (err) {
     return {
       statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ error: "water fetch failed", details: String(e) })
+      body: JSON.stringify({ error: "Exception", details: String(err) })
     };
   }
 };
