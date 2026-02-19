@@ -1,35 +1,35 @@
-exports.handler = async () => {
+export async function onRequest() {
   try {
     const r = await fetch(
       "https://waterlevel.ie/hydro-data/api/stations/19002/measurements?days=1",
       {
         headers: {
           "Accept": "application/json",
-          "User-Agent": "NetlifyFunction/1.0"
+          "User-Agent": "CloudflareWorker/1.0"
         }
       }
     );
 
     if (!r.ok) {
-      return {
-        statusCode: r.status,
-        body: JSON.stringify({
+      return new Response(
+        JSON.stringify({
           error: "Fetch failed",
           details: await r.text()
-        })
-      };
+        }),
+        { status: r.status }
+      );
     }
 
     const data = await r.json();
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(data)
-    };
+    return new Response(JSON.stringify(data), {
+      headers: { "Content-Type": "application/json" }
+    });
+
   } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Exception", details: String(err) })
-    };
+    return new Response(
+      JSON.stringify({ error: "Exception", details: String(err) }),
+      { status: 500 }
+    );
   }
-};
+}
