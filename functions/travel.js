@@ -6,7 +6,8 @@ export async function onRequest(context) {
       intermediates: [
         { address: "Cianlea Swords" }
       ],
-      travelMode: "DRIVE"
+      travelMode: "DRIVE",
+      routingPreference: "TRAFFIC_AWARE"
     };
 
     const response = await fetch(
