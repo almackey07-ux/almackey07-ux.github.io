@@ -21,7 +21,6 @@ body{
   background:linear-gradient(#2c5364,#203a43,#0f2027);
 }
 
-/* Sections */
 .section{
   margin:25px 0;
   padding:20px;
@@ -31,7 +30,6 @@ body{
   backdrop-filter:blur(6px);
 }
 
-/* Countdown */
 .countdown{
   display:flex;
   justify-content:center;
@@ -57,7 +55,6 @@ body{
   opacity:.8;
 }
 
-/* Rows */
 .row{
   display:flex;
   justify-content:center;
@@ -66,7 +63,6 @@ body{
   margin-top:8px;
 }
 
-/* Checklist */
 .checklist{
   text-align:left;
   display:inline-block;
@@ -77,27 +73,6 @@ body{
   display:block;
   margin:8px 0;
   cursor:pointer;
-}
-
-/* Weather animation */
-.weather-icon{
-  width:60px;
-  height:60px;
-  animation:float 3s ease-in-out infinite;
-}
-
-@keyframes float{
-  0%{transform:translateY(0)}
-  50%{transform:translateY(-6px)}
-  100%{transform:translateY(0)}
-}
-
-/* Sound toggle */
-.audio-toggle{
-  margin-top:18px;
-  cursor:pointer;
-  color:#a5d6a7;
-  font-size:18px;
 }
 </style>
 </head>
@@ -120,7 +95,6 @@ body{
 <!-- WEATHER -->
 <div class="section">
   <h3>🌦 Weather</h3>
-  <img src="https://cdn-icons-png.flaticon.com/512/414/414825.png" class="weather-icon">
   <div class="row">
     <span id="weather-temp"></span>
     <span id="wind-speed"></span>
@@ -138,6 +112,7 @@ body{
   <div class="row">🐊 Feeding: <span id="feeding"></span></div>
   <div class="row">🎣 Lure: <span id="lure"></span></div>
   <div class="row">🔥 Activity: <span id="activity"></span></div>
+
 </div>
 
 <!-- TRAVEL -->
@@ -173,12 +148,6 @@ body{
   <div>🥈 Keiran 👑</div>
   <div>🥉 Heno</div>
 </div>
-
-<div class="audio-toggle" id="soundBtn">🔊 Toggle Lake Sounds</div>
-
-<audio id="lakeSound" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3">
-</audio>
 
 <script>
 const el=id=>document.getElementById(id)
@@ -228,12 +197,13 @@ async function water(){
   try{
     let r=await fetch("/.netlify/functions/water")
     let j=await r.json()
-    if(j?.length){
-      el("water-level").innerText=j.at(-1).value.toFixed(2)+" m"
-    }else{
-      el("water-level").innerText="No data"
+
+    if(Array.isArray(j) && j.length){
+      el("water-level").innerText = j.at(-1).value.toFixed(2)+" m"
+    } else {
+      el("water-level").innerText = "No data"
     }
-  }catch{
+  }catch(e){
     el("water-level").innerText="Error"
   }
 }
@@ -248,13 +218,18 @@ function formatDuration(d){
   return `${h}h ${m}m`
 }
 
-/* TRAVEL — per-leg breakdown */
+/* TRAVEL */
 async function travel(){
   try{
     let r=await fetch("/.netlify/functions/travel")
     let j=await r.json()
 
-    const route=j.routes[0]
+    const route=j.routes?.[0]
+    if(!route){
+      el("travel").innerText="No route"
+      return
+    }
+
     const total=formatDuration(route.duration)
 
     let legs=""
@@ -266,7 +241,7 @@ async function travel(){
       <strong>Total:</strong> ${total}<br>
       ${legs}
     `
-  }catch{
+  }catch(e){
     el("travel").innerText="Travel error"
   }
 }
@@ -298,21 +273,6 @@ function updateActivity(p){
     p<1000?"🔥 Excellent":
     p<1015?"👍 Good":
     "Slow"
-}
-
-/* SOUND */
-const sound=el("lakeSound")
-sound.volume=.4
-let playing=false
-
-el("soundBtn").onclick=async()=>{
-  if(!playing){
-    await sound.play().catch(()=>{})
-    playing=true
-  }else{
-    sound.pause()
-    playing=false
-  }
 }
 </script>
 
