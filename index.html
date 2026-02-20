@@ -1,126 +1,197 @@
-<!-- force redeploy -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pike Fishing Trip Corrib</title>
+  <meta charset="UTF-8">
+  <title>Pike Trip Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
+      background: #0d1117;
+      color: #e6edf3;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
       padding: 20px;
     }
-    h1, h2 {
-      margin-top: 0;
+
+    .container {
+      max-width: 600px;
+      margin: auto;
     }
+
     .card {
-      background: #222;
-      padding: 15px;
-      margin-bottom: 20px;
-      border-radius: 10px;
+      background: #161b22;
+      padding: 18px;
+      margin-bottom: 18px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.4);
     }
-    .label {
+
+    h2 {
+      margin-top: 0;
+      font-size: 1.3em;
+    }
+
+    .water-text {
+      font-size: 1.2em;
       font-weight: bold;
-      color: #4fc3f7;
+      margin-top: 10px;
+    }
+
+    .rising { color: #4ade80; }   /* green */
+    .falling { color: #f87171; }  /* red */
+    .steady { color: #facc15; }   /* yellow */
+
+    small {
+      color: #8b949e;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 4px;
     }
   </style>
 </head>
-
 <body>
+  <div class="container">
 
-  <h1>Pike Fishing Trip Dashboard</h1>
+    <!-- Timer -->
+    <div class="card">
+      <h2>⏱️ Last Updated</h2>
+      <p id="timer">Loading…</p>
+    </div>
 
-  <!-- WEATHER -->
-  <div class="card">
-    <h2>Weather</h2>
-    <div><span class="label">Temperature:</span> <span id="temp">Loading...</span></div>
-    <div><span class="label">Wind:</span> <span id="wind">Loading...</span></div>
+    <!-- Weather -->
+    <div class="card">
+      <h2>🌦️ Weather</h2>
+      <p id="weather">Loading…</p>
+    </div>
+
+    <!-- Water Level -->
+    <div class="card">
+      <h2>🌊 Water Level (Weekly)</h2>
+      <img
+        src="http://waterlevel.ie/graph/week/30101_0001.png"
+        alt="Weekly Water Level Graph"
+        style="width:100%; border-radius:8px;"
+      >
+      <p id="water-trend" class="water-text">Loading…</p>
+    </div>
+
+    <!-- Pike Conditions -->
+    <div class="card">
+      <h2>🐊 Pike Conditions</h2>
+      <p id="pike">
+        <!-- You can wire this to real data later; for now it can be static or derived -->
+        🌊 Water Level: <span id="pike-water">Loading…</span><br>
+        🌡️ Pressure: 993.4 hPa<br>
+        🌙 Moon: Quarter<br>
+        🐊 Feeding: Good<br>
+        🎣 Lure: 🔥 Big jerkbaits<br>
+        🔥 Activity: 🔥 Excellent
+      </p>
+    </div>
+
+    <!-- Travel Time -->
+    <div class="card">
+      <h2>🚗 Live Travel Time</h2>
+      <p id="travel">Loading…</p>
+      <small>Brookfield Park Rathnew → Cianlea Swords → Birchall Lodge</small>
+    </div>
+
+    <!-- Pack List -->
+    <div class="card">
+      <h2>🎒 Pack List</h2>
+      <label><input type="checkbox"> Beers 🍺</label>
+      <label><input type="checkbox"> Deadbait Rod</label>
+      <label><input type="checkbox"> Lure Rod</label>
+      <label><input type="checkbox"> Net</label>
+      <label><input type="checkbox"> Forceps</label>
+      <label><input type="checkbox"> Traces</label>
+    </div>
+
   </div>
 
-  <!-- PIKE CONDITIONS -->
-  <div class="card">
-    <h2>Pike Conditions</h2>
-    <div><span class="label">Water Level:</span> <span id="water">Loading...</span></div>
-    <div><span class="label">Pressure:</span> <span id="pressure">993.4 hPa</span></div>
-    <div><span class="label">Moon:</span> <span id="moon">Quarter</span></div>
-    <div><span class="label">Feeding:</span> <span id="feeding">Good</span></div>
-    <div><span class="label">Lure:</span> <span id="lure">Big jerkbaits</span></div>
-    <div><span class="label">Activity:</span> <span id="activity">Excellent</span></div>
-  </div>
-
-  <!-- TRAVEL -->
-  <div class="card">
-    <h2>Live Travel Time</h2>
-    <div id="travel">Loading...</div>
-  </div>
-
-  <!-- PACK LIST -->
-  <div class="card">
-    <h2>Pack List</h2>
-    <ul>
-      <li>Beers 🍺</li>
-      <li>Deadbait Rod</li>
-      <li>Lure Rod</li>
-    </ul>
-  </div>
-
-<script>
-  // WEATHER API (Open-Meteo)
-  async function loadWeather() {
-    try {
-      const r = await fetch("https://api.open-meteo.com/v1/forecast?latitude=53.2&longitude=-6.1&current_weather=true");
-      const data = await r.json();
-      document.getElementById("temp").textContent = data.current_weather.temperature + "°C";
-      document.getElementById("wind").textContent = data.current_weather.windspeed + " km/h";
-    } catch {
-      document.getElementById("temp").textContent = "Error";
-      document.getElementById("wind").textContent = "Error";
+  <script>
+    // Simple "seconds since load" timer
+    function startTimer() {
+      let sec = 0;
+      const el = document.getElementById("timer");
+      setInterval(() => {
+        sec++;
+        el.textContent = sec + " seconds ago";
+      }, 1000);
     }
-  }
+    startTimer();
 
-  // WATER LEVEL (Cloudflare Function)
-  async function loadWater() {
-    try {
-      const r = await fetch("/water");
-      const data = await r.json();
-
-      if (!data || !data.value) {
-        document.getElementById("water").textContent = "Error";
-        return;
+    // Weather loader – expects /weather to return { temp, wind, dir }
+    async function loadWeather() {
+      try {
+        const r = await fetch("/weather");
+        const data = await r.json();
+        document.getElementById("weather").textContent =
+          `${data.temp}°C   ${data.wind} km/h   ${data.dir}`;
+      } catch {
+        document.getElementById("weather").textContent = "Error loading weather";
       }
-
-      document.getElementById("water").textContent = data.value + "m";
-    } catch {
-      document.getElementById("water").textContent = "Error";
     }
-  }
+    loadWeather();
 
-  // TRAVEL TIME (Cloudflare Function)
-  async function loadTravel() {
-    try {
-      const r = await fetch("/travel");
-      const data = await r.json();
+    // Travel loader – expects /travel to return routes[0].duration like "14237s"
+    async function loadTravel() {
+      try {
+        const r = await fetch("/travel");
+        const data = await r.json();
 
-      if (!data.routes || !data.routes[0]) {
+        const raw = data?.routes?.[0]?.duration;
+        if (!raw) throw new Error("No duration");
+
+        const sec = parseInt(String(raw).replace("s", ""), 10);
+        if (isNaN(sec)) throw new Error("Bad duration");
+
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+
+        document.getElementById("travel").textContent =
+          `${h}h ${m}m`;
+      } catch {
         document.getElementById("travel").textContent = "Travel error";
-        return;
       }
-
-      const duration = data.routes[0].duration;
-      document.getElementById("travel").textContent = "Travel time: " + duration;
-    } catch {
-      document.getElementById("travel").textContent = "Travel error";
     }
-  }
+    loadTravel();
 
-  // INIT
-  loadWeather();
-  loadWater();
-  loadTravel();
-</script>
+    // Water trend loader – expects /water to return { value, trend }
+    async function loadWaterTrend() {
+      try {
+        const r = await fetch("/water");
+        const data = await r.json();
 
+        const el = document.getElementById("water-trend");
+        const pikeWater = document.getElementById("pike-water");
+
+        if (data.error || typeof data.value !== "number") {
+          el.textContent = "Error loading water level";
+          pikeWater.textContent = "Error";
+          return;
+        }
+
+        const trendClass = data.trend;
+        const arrow =
+          data.trend === "rising" ? "📈 Rising" :
+          data.trend === "falling" ? "📉 Falling" :
+          "➖ Steady";
+
+        el.innerHTML =
+          `Latest Level: ${data.value.toFixed(2)} m • ` +
+          `<span class="${trendClass}">${arrow}</span>`;
+
+        pikeWater.textContent = `${data.value.toFixed(2)} m (${data.trend})`;
+      } catch {
+        document.getElementById("water-trend").textContent = "Error loading water level";
+        document.getElementById("pike-water").textContent = "Error";
+      }
+    }
+    loadWaterTrend();
+  </script>
 </body>
 </html>
