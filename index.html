@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pike Trip Dashboard</title>
+  <title>Esox Expeditions</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
     body {
-      background: #0d1117;
-      color: #e6edf3;
+      background: #e5e7eb;
+      color: #111827;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
       padding: 20px;
@@ -16,15 +16,32 @@
 
     .container {
       max-width: 600px;
-      margin: auto;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .title {
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: #4b5563;
     }
 
     .card {
-      background: #161b22;
+      background: #ffffff;
       padding: 18px;
       margin-bottom: 18px;
       border-radius: 12px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      text-align: left;
+    }
+
+    h1 {
+      font-size: 1.8em;
+      margin: 0;
     }
 
     h2 {
@@ -32,18 +49,22 @@
       font-size: 1.3em;
     }
 
-    .water-text {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin-top: 10px;
+    .countdown {
+      font-size: 1.4em;
+      font-weight: 600;
+      text-align: center;
     }
 
-    .rising { color: #4ade80; }   /* green */
-    .falling { color: #f87171; }  /* red */
-    .steady { color: #facc15; }   /* yellow */
+    .label {
+      font-weight: 600;
+    }
+
+    .rising { color: #16a34a; }   /* green */
+    .falling { color: #dc2626; }  /* red */
+    .steady { color: #ca8a04; }   /* amber */
 
     small {
-      color: #8b949e;
+      color: #6b7280;
     }
 
     label {
@@ -55,39 +76,36 @@
 <body>
   <div class="container">
 
-    <!-- Timer -->
+    <!-- Title / Next Trip -->
+    <div class="title">
+      <h1>Welcome to Esox Expeditions</h1>
+      <p class="subtitle">Next trip: Lough Corrib</p>
+    </div>
+
+    <!-- Next Trip Details + Countdown -->
     <div class="card">
-      <h2>⏱️ Last Updated</h2>
-      <p id="timer">Loading…</p>
+      <h2>🗺️ Next Trip Details</h2>
+      <p><span class="label">Destination:</span> Lough Corrib</p>
+      <p><span class="label">Departure Date:</span> 7th March, 5:00 AM</p>
+      <p class="countdown" id="countdown">Countdown: --d --h --m --s</p>
     </div>
 
     <!-- Weather -->
     <div class="card">
-      <h2>🌦️ Weather</h2>
+      <h2>🌦️ Current Weather – Lough Corrib</h2>
       <p id="weather">Loading…</p>
-    </div>
-
-    <!-- Water Level -->
-    <div class="card">
-      <h2>🌊 Water Level (Weekly)</h2>
-      <img
-        src="http://waterlevel.ie/graph/week/30101_0001.png"
-        alt="Weekly Water Level Graph"
-        style="width:100%; border-radius:8px;"
-      >
-      <p id="water-trend" class="water-text">Loading…</p>
     </div>
 
     <!-- Pike Conditions -->
     <div class="card">
       <h2>🐊 Pike Conditions</h2>
-      <p id="pike">
+      <p>
         🌊 Water Level: <span id="pike-water">Loading…</span><br>
         🌡️ Pressure: 993.4 hPa<br>
         🌙 Moon: Quarter<br>
-        🐊 Feeding: Good<br>
-        🎣 Lure: 🔥 Big jerkbaits<br>
-        🔥 Activity: 🔥 Excellent
+        🐊 Feeding: <span id="pike-feeding">Good</span><br>
+        🎣 Lure: <span id="pike-lure">Loading…</span><br>
+        🔥 Activity: <span id="pike-activity">Loading…</span>
       </p>
     </div>
 
@@ -107,29 +125,57 @@
       <label><input type="checkbox"> Net</label>
       <label><input type="checkbox"> Forceps</label>
       <label><input type="checkbox"> Traces</label>
+      <label><input type="checkbox"> Life jackets</label>
+      <label><input type="checkbox"> Lures</label>
+      <label><input type="checkbox"> Waders</label>
+      <label><input type="checkbox"> Waterproof jacket</label>
     </div>
 
   </div>
 
   <script>
-    // Simple "seconds since load" timer
-    function startTimer() {
-      let sec = 0;
-      const el = document.getElementById("timer");
-      setInterval(() => {
-        sec++;
-        el.textContent = sec + " seconds ago";
-      }, 1000);
+    // Countdown to 7th March 5:00 AM (assume current year)
+    function startCountdown() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const target = new Date(year, 2, 7, 5, 0, 0); // March is month 2 (0-based)
+
+      function update() {
+        const now = new Date();
+        let diff = target - now;
+
+        if (diff <= 0) {
+          document.getElementById("countdown").textContent = "Countdown: Trip in progress or completed";
+          return;
+        }
+
+        const sec = Math.floor(diff / 1000);
+        const days = Math.floor(sec / (3600 * 24));
+        const hours = Math.floor((sec % (3600 * 24)) / 3600);
+        const minutes = Math.floor((sec % 3600) / 60);
+        const seconds = sec % 60;
+
+        document.getElementById("countdown").textContent =
+          `Countdown: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }
+
+      update();
+      setInterval(update, 1000);
     }
-    startTimer();
+    startCountdown();
 
     // Weather loader – expects /weather to return { temp, wind, dir }
     async function loadWeather() {
       try {
         const r = await fetch("/weather");
         const data = await r.json();
+
+        const temp = data.temp;
+        const wind = data.wind;
+        const dir = data.dir;
+
         document.getElementById("weather").textContent =
-          `${data.temp}°C   ${data.wind} km/h   ${data.dir}`;
+          `🌡️ ${temp}°C   💨 ${wind} km/h   🧭 ${dir}`;
       } catch {
         document.getElementById("weather").textContent = "Error loading weather";
       }
@@ -159,38 +205,52 @@
     }
     loadTravel();
 
-    // Water trend loader – expects /water to return { value, trend }
-    async function loadWaterTrend() {
+    // Pike conditions – enhanced lure selection based on water trend
+    // Expects /water to return { value, trend }
+    async function loadPikeConditions() {
       try {
         const r = await fetch("/water");
         const data = await r.json();
 
-        const el = document.getElementById("water-trend");
-        const pikeWater = document.getElementById("pike-water");
+        const waterEl = document.getElementById("pike-water");
+        const lureEl = document.getElementById("pike-lure");
+        const activityEl = document.getElementById("pike-activity");
 
         if (data.error || typeof data.value !== "number") {
-          el.textContent = "Error loading water level";
-          pikeWater.textContent = "Error";
+          waterEl.textContent = "Error";
+          lureEl.textContent = "Fallback: big jerkbaits";
+          activityEl.textContent = "Unknown";
           return;
         }
 
-        const trendClass = data.trend;
-        const arrow =
-          data.trend === "rising" ? "📈 Rising" :
-          data.trend === "falling" ? "📉 Falling" :
-          "➖ Steady";
+        const level = data.value;
+        const trend = data.trend || "steady";
 
-        el.innerHTML =
-          `Latest Level: ${data.value.toFixed(2)} m • ` +
-          `<span class="${trendClass}">${arrow}</span>`;
+        waterEl.textContent = `${level.toFixed(2)} m (${trend})`;
 
-        pikeWater.textContent = `${data.value.toFixed(2)} m (${data.trend})`;
+        let lure = "Big jerkbaits";
+        let activity = "Good";
+
+        if (trend === "rising") {
+          lure = "Fast-moving crankbaits & spinnerbaits";
+          activity = "Excellent";
+        } else if (trend === "falling") {
+          lure = "Slow soft plastics & jigs";
+          activity = "Fair";
+        } else {
+          lure = "Glide baits & jerkbaits";
+          activity = "Good";
+        }
+
+        lureEl.textContent = lure;
+        activityEl.textContent = activity;
       } catch {
-        document.getElementById("water-trend").textContent = "Error loading water level";
         document.getElementById("pike-water").textContent = "Error";
+        document.getElementById("pike-lure").textContent = "Fallback: big jerkbaits";
+        document.getElementById("pike-activity").textContent = "Unknown";
       }
     }
-    loadWaterTrend();
+    loadPikeConditions();
   </script>
 </body>
 </html>
