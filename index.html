@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -43,11 +43,11 @@
   <div class="card">
     <h2>Pike Conditions</h2>
     <div><span class="label">Water Level:</span> <span id="water">Loading...</span></div>
-    <div><span class="label">Pressure:</span> <span id="pressure">Loading...</span></div>
-    <div><span class="label">Moon:</span> <span id="moon">Loading...</span></div>
-    <div><span class="label">Feeding:</span> <span id="feeding">Loading...</span></div>
-    <div><span class="label">Lure:</span> <span id="lure">Loading...</span></div>
-    <div><span class="label">Activity:</span> <span id="activity">Loading...</span></div>
+    <div><span class="label">Pressure:</span> <span id="pressure">993.4 hPa</span></div>
+    <div><span class="label">Moon:</span> <span id="moon">Quarter</span></div>
+    <div><span class="label">Feeding:</span> <span id="feeding">Good</span></div>
+    <div><span class="label">Lure:</span> <span id="lure">Big jerkbaits</span></div>
+    <div><span class="label">Activity:</span> <span id="activity">Excellent</span></div>
   </div>
 
   <!-- TRAVEL -->
@@ -115,20 +115,10 @@
     }
   }
 
-  // STATIC CONDITIONS
-  function loadStatic() {
-    document.getElementById("pressure").textContent = "993.4 hPa";
-    document.getElementById("moon").textContent = "Quarter";
-    document.getElementById("feeding").textContent = "Good";
-    document.getElementById("lure").textContent = "Big jerkbaits";
-    document.getElementById("activity").textContent = "Excellent";
-  }
-
   // INIT
   loadWeather();
   loadWater();
   loadTravel();
-  loadStatic();
 </script>
 
 </body>
