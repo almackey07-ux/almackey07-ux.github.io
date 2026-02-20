@@ -1,14 +1,14 @@
 export async function onRequest() {
   try {
-    const r = await fetch(
-      "https://waterlevel.ie/hydro-data/api/stations/19002/measurements?days=1",
-      {
-        headers: {
-          "Accept": "application/json",
-          "User-Agent": "CloudflareWorker/1.0"
-        }
+    const url =
+      "https://waterlevel.ie/hydro-data/api/v1/stations/11775/measurements?period=P1D";
+
+    const r = await fetch(url, {
+      headers: {
+        "Accept": "application/json",
+        "User-Agent": "CloudflareWorker/1.0"
       }
-    );
+    });
 
     if (!r.ok) {
       return new Response(
@@ -22,6 +22,10 @@ export async function onRequest() {
     }
 
     const data = await r.json();
+
+    // New API format:
+    // { "measurements": [ { "value": 0.123, "timestamp": "..." }, ... ] }
+
     const latest = data?.measurements?.[0];
 
     if (!latest) {
@@ -30,9 +34,10 @@ export async function onRequest() {
       });
     }
 
-    return new Response(JSON.stringify({ value: latest.value }), {
-      headers: { "Content-Type": "application/json" }
-    });
+    return new Response(
+      JSON.stringify({ value: latest.value }),
+      { headers: { "Content-Type": "application/json" } }
+    );
 
   } catch (err) {
     return new Response(
