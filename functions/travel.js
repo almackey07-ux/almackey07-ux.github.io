@@ -1,39 +1,28 @@
-export async function onRequest(context) {
+async function loadTravel() {
   try {
-    const requestBody = {
-      origin: { address: "Brookfield Park Rathnew" },
-      destination: { address: "Birchall Lodge" },
-      intermediates: [
-        { address: "Cianlea Swords" }
-      ],
-      travelMode: "DRIVE",
-      routingPreference: "TRAFFIC_AWARE"
-    };
+    const r = await fetch("/travel");
+    const data = await r.json();
 
-    const response = await fetch(
-      "https://routes.googleapis.com/directions/v2:computeRoutes",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Goog-Api-Key": context.env.GMAPS_KEY,
-          "X-Goog-FieldMask":
-            "routes.duration,routes.distanceMeters,routes.legs.duration,routes.legs.distanceMeters"
-        },
-        body: JSON.stringify(requestBody)
-      }
-    );
+    const raw = data?.routes?.[0]?.duration;
+    if (!raw) {
+      document.getElementById("travel").textContent = "Travel error";
+      return;
+    }
 
-    const data = await response.json();
+    // Handle "14237s", "14237", or 14237
+    const durationSec = parseInt(String(raw).replace("s", ""), 10);
 
-    return new Response(JSON.stringify(data), {
-      headers: { "Content-Type": "application/json" }
-    });
+    if (isNaN(durationSec)) {
+      document.getElementById("travel").textContent = "Travel error";
+      return;
+    }
 
-  } catch (err) {
-    return new Response(
-      JSON.stringify({ error: "Exception", details: String(err) }),
-      { status: 500 }
-    );
+    const hours = Math.floor(durationSec / 3600);
+    const minutes = Math.floor((durationSec % 3600) / 60);
+
+    document.getElementById("travel").textContent =
+      `Travel time: ${hours}h ${minutes}m`;
+  } catch {
+    document.getElementById("travel").textContent = "Travel error";
   }
 }
