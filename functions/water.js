@@ -14,6 +14,7 @@ export async function onRequest() {
       return new Response(
         JSON.stringify({
           error: "Fetch failed",
+          status: r.status,
           details: await r.text()
         }),
         { status: r.status }
@@ -21,10 +22,15 @@ export async function onRequest() {
     }
 
     const data = await r.json();
+    const latest = data?.measurements?.[0];
 
-    const latest = data.measurements?.[0] || null;
+    if (!latest) {
+      return new Response(JSON.stringify({ error: "No data" }), {
+        headers: { "Content-Type": "application/json" }
+      });
+    }
 
-    return new Response(JSON.stringify(latest), {
+    return new Response(JSON.stringify({ value: latest.value }), {
       headers: { "Content-Type": "application/json" }
     });
 
