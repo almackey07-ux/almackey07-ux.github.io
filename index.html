@@ -321,7 +321,7 @@
     function calculateCosts() {
       const fuelPrice     = 1.69;
       const kmPerLitre    = 15;
-      const tollsTotal    = 10;
+      const tollsTotal    = 20;
       const accommodation = 65;
       const boat          = 47;
       const people        = 3;
@@ -339,10 +339,10 @@
         fuelPerPerson + tollPerPerson + accomPerPerson + boatPerPerson;
 
       document.getElementById("cost-output").innerHTML = `
-        <div class="cost-line">⛽ Fuel (return): €${fuelCost.toFixed(2)} (~€${fuelPerPerson.toFixed(2)} per person)</div>
-        <div class="cost-line">🛣️ Tolls: €${tollsTotal} (~€${tollPerPerson} per person)</div>
-        <div class="cost-line">🏨 Accommodation: €${accomPerPerson.toFixed(2)} per person</div>
-        <div class="cost-line">🛶 Boat Hire: €${boatPerPerson.toFixed(2)} per person</div>
+        <div class="cost-line">⛽ Fuel: €${fuelCost.toFixed(2)}</div>
+        <div class="cost-line">🛣️ Tolls: €${tollsTotal}</div>
+        <div class="cost-line">🏨 Accommodation: €${accomPerPerson.toFixed(2)}</div>
+        <div class="cost-line">🛶 Boat Hire: €${boatPerPerson.toFixed(2)}</div>
         <div class="cost-total">Total Per Person: €${totalPerPerson.toFixed(2)}</div>
       `;
     }
