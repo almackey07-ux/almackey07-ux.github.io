@@ -7,15 +7,15 @@
 
   <style>
     body {
-      background: #e5e7eb;
-      color: #111827;
+      background: #e8f4f7; /* soft lake blue */
+      color: #0b2e33;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
       padding: 20px;
     }
 
     .container {
-      max-width: 600px;
+      max-width: 650px;
       margin: 0 auto;
       text-align: center;
     }
@@ -24,44 +24,50 @@
       margin-bottom: 10px;
     }
 
+    h1 {
+      font-size: 2em;
+      margin: 0;
+      color: #0a3d62;
+    }
+
     .subtitle {
-      margin-top: 0;
+      margin-top: 4px;
       margin-bottom: 24px;
-      color: #4b5563;
+      color: #1e5f74;
+      font-weight: 500;
     }
 
     .card {
       background: #ffffff;
-      padding: 18px;
-      margin-bottom: 18px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
       text-align: left;
-    }
-
-    h1 {
-      font-size: 1.8em;
-      margin: 0;
+      border-left: 6px solid #1e81b0; /* Corrib blue accent */
     }
 
     h2 {
       margin-top: 0;
-      font-size: 1.3em;
+      font-size: 1.35em;
+      color: #0a3d62;
     }
 
     .countdown {
       font-size: 1.4em;
       font-weight: 600;
       text-align: center;
+      color: #0a3d62;
     }
 
     .label {
       font-weight: 600;
+      color: #0a3d62;
     }
 
-    .rising { color: #16a34a; }   /* green */
-    .falling { color: #dc2626; }  /* red */
-    .steady { color: #ca8a04; }   /* amber */
+    .rising { color: #16a34a; }
+    .falling { color: #dc2626; }
+    .steady { color: #ca8a04; }
 
     small {
       color: #6b7280;
@@ -69,20 +75,21 @@
 
     label {
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      font-size: 1.05em;
     }
   </style>
 </head>
 <body>
   <div class="container">
 
-    <!-- Title / Next Trip -->
+    <!-- Title -->
     <div class="title">
       <h1>Welcome to Esox Expeditions</h1>
       <p class="subtitle">Next trip: Lough Corrib</p>
     </div>
 
-    <!-- Next Trip Details + Countdown -->
+    <!-- Trip Details -->
     <div class="card">
       <h2>🗺️ Next Trip Details</h2>
       <p><span class="label">Destination:</span> Lough Corrib</p>
@@ -105,6 +112,7 @@
         🌙 Moon: Quarter<br>
         🐊 Feeding: <span id="pike-feeding">Good</span><br>
         🎣 Lure: <span id="pike-lure">Loading…</span><br>
+        💬 Why this lure: <span id="pike-lure-reason">Loading…</span><br>
         🔥 Activity: <span id="pike-activity">Loading…</span>
       </p>
     </div>
@@ -134,24 +142,27 @@
   </div>
 
   <script>
-    // Countdown to 7th March 5:00 AM (assume current year)
+    /* ------------------------------
+       COUNTDOWN
+    ------------------------------ */
     function startCountdown() {
       const now = new Date();
       const year = now.getFullYear();
-      const target = new Date(year, 2, 7, 5, 0, 0); // March is month 2 (0-based)
+      const target = new Date(year, 2, 7, 5, 0, 0); // March 7, 5am
 
       function update() {
         const now = new Date();
         let diff = target - now;
 
         if (diff <= 0) {
-          document.getElementById("countdown").textContent = "Countdown: Trip in progress or completed";
+          document.getElementById("countdown").textContent =
+            "Countdown: Trip in progress or completed";
           return;
         }
 
         const sec = Math.floor(diff / 1000);
-        const days = Math.floor(sec / (3600 * 24));
-        const hours = Math.floor((sec % (3600 * 24)) / 3600);
+        const days = Math.floor(sec / 86400);
+        const hours = Math.floor((sec % 86400) / 3600);
         const minutes = Math.floor((sec % 3600) / 60);
         const seconds = sec % 60;
 
@@ -164,49 +175,123 @@
     }
     startCountdown();
 
-    // Weather loader – expects /weather to return { temp, wind, dir }
+
+    /* ------------------------------
+       WEATHER (with rainfall estimation)
+    ------------------------------ */
     async function loadWeather() {
       try {
         const r = await fetch("/weather");
         const data = await r.json();
 
-        const temp = data.temp;
-        const wind = data.wind;
-        const dir = data.dir;
+        const temp = data.temp ?? data.temperature;
+        const wind = data.wind ?? data.wind_speed;
+        const dir = data.dir ?? data.wind_direction;
+        const desc = data.description?.toLowerCase() ?? "";
+
+        if (!temp || !wind || !dir)
+          throw new Error("Missing fields");
 
         document.getElementById("weather").textContent =
           `🌡️ ${temp}°C   💨 ${wind} km/h   🧭 ${dir}`;
+
+        window._weatherDescription = desc; // store for lure logic
       } catch {
         document.getElementById("weather").textContent = "Error loading weather";
+        window._weatherDescription = "";
       }
     }
     loadWeather();
 
-    // Travel loader – expects /travel to return routes[0].duration like "14237s"
+
+    /* ------------------------------
+       TRAVEL TIME (bulletproof)
+    ------------------------------ */
     async function loadTravel() {
       try {
         const r = await fetch("/travel");
         const data = await r.json();
 
-        const raw = data?.routes?.[0]?.duration;
-        if (!raw) throw new Error("No duration");
+        let raw = data?.routes?.[0]?.duration;
+        if (!raw) throw new Error("Missing duration");
 
-        const sec = parseInt(String(raw).replace("s", ""), 10);
+        raw = String(raw).replace(/[^0-9]/g, "");
+        const sec = parseInt(raw, 10);
+
         if (isNaN(sec)) throw new Error("Bad duration");
 
         const h = Math.floor(sec / 3600);
         const m = Math.floor((sec % 3600) / 60);
 
-        document.getElementById("travel").textContent =
-          `${h}h ${m}m`;
+        document.getElementById("travel").textContent = `${h}h ${m}m`;
       } catch {
         document.getElementById("travel").textContent = "Travel error";
       }
     }
     loadTravel();
 
-    // Pike conditions – enhanced lure selection based on water trend
-    // Expects /water to return { value, trend }
+
+    /* ------------------------------
+       LURE RECOMMENDATION ENGINE
+       Based on:
+       - water trend
+       - water level
+       - weather description
+       - estimated rainfall
+    ------------------------------ */
+    function estimateRain(desc) {
+      if (!desc) return "dry";
+
+      if (desc.includes("rain") || desc.includes("showers") || desc.includes("drizzle"))
+        return "wet";
+
+      if (desc.includes("cloud") || desc.includes("overcast"))
+        return "neutral";
+
+      return "dry";
+    }
+
+    function getLureRecommendation(trend, level, weatherDesc) {
+      const rain = estimateRain(weatherDesc);
+
+      // Rising water + wet weather = aggressive pike
+      if (trend === "rising") {
+        return {
+          lure: "Fast crankbaits & spinnerbaits",
+          reason: "Rising water and wet weather push baitfish into shallows, triggering aggressive strikes.",
+          activity: "Excellent"
+        };
+      }
+
+      // Falling water = deeper, slower presentations
+      if (trend === "falling") {
+        return {
+          lure: "Slow soft plastics & jigs",
+          reason: "Falling water makes pike hold deeper and prefer slower, bottom‑oriented lures.",
+          activity: "Fair"
+        };
+      }
+
+      // Steady water
+      if (rain === "wet") {
+        return {
+          lure: "Bright spinnerbaits & paddle tails",
+          reason: "Rain adds colour to the water, making vibration and flash more effective.",
+          activity: "Good"
+        };
+      }
+
+      return {
+        lure: "Glide baits & jerkbaits",
+        reason: "Stable water and dry conditions favour natural, mid‑depth presentations.",
+        activity: "Good"
+      };
+    }
+
+
+    /* ------------------------------
+       LOAD PIKE CONDITIONS
+    ------------------------------ */
     async function loadPikeConditions() {
       try {
         const r = await fetch("/water");
@@ -214,39 +299,33 @@
 
         const waterEl = document.getElementById("pike-water");
         const lureEl = document.getElementById("pike-lure");
+        const reasonEl = document.getElementById("pike-lure-reason");
         const activityEl = document.getElementById("pike-activity");
 
         if (data.error || typeof data.value !== "number") {
           waterEl.textContent = "Error";
-          lureEl.textContent = "Fallback: big jerkbaits";
+          lureEl.textContent = "Fallback: jerkbaits";
+          reasonEl.textContent = "Unable to load water data.";
           activityEl.textContent = "Unknown";
           return;
         }
 
         const level = data.value;
-        const trend = data.trend || "steady";
+        const trend = data.trend;
+        const weatherDesc = window._weatherDescription ?? "";
 
         waterEl.textContent = `${level.toFixed(2)} m (${trend})`;
 
-        let lure = "Big jerkbaits";
-        let activity = "Good";
+        const rec = getLureRecommendation(trend, level, weatherDesc);
 
-        if (trend === "rising") {
-          lure = "Fast-moving crankbaits & spinnerbaits";
-          activity = "Excellent";
-        } else if (trend === "falling") {
-          lure = "Slow soft plastics & jigs";
-          activity = "Fair";
-        } else {
-          lure = "Glide baits & jerkbaits";
-          activity = "Good";
-        }
+        lureEl.textContent = rec.lure;
+        reasonEl.textContent = rec.reason;
+        activityEl.textContent = rec.activity;
 
-        lureEl.textContent = lure;
-        activityEl.textContent = activity;
       } catch {
         document.getElementById("pike-water").textContent = "Error";
-        document.getElementById("pike-lure").textContent = "Fallback: big jerkbaits";
+        document.getElementById("pike-lure").textContent = "Fallback: jerkbaits";
+        document.getElementById("pike-lure-reason").textContent = "Unable to load water data.";
         document.getElementById("pike-activity").textContent = "Unknown";
       }
     }
