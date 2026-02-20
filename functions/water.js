@@ -22,10 +22,6 @@ export async function onRequest() {
     }
 
     const data = await r.json();
-
-    // New API format:
-    // { "measurements": [ { "value": 0.123, "timestamp": "..." }, ... ] }
-
     const latest = data?.measurements?.[0];
 
     if (!latest) {
