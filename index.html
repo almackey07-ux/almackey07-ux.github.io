@@ -7,7 +7,7 @@
 
   <style>
     body {
-      background: #e8f4f7; /* soft lake blue */
+      background: #e8f4f7;
       color: #0b2e33;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
@@ -18,10 +18,6 @@
       max-width: 650px;
       margin: 0 auto;
       text-align: center;
-    }
-
-    .title {
-      margin-bottom: 10px;
     }
 
     h1 {
@@ -44,7 +40,7 @@
       border-radius: 14px;
       box-shadow: 0 4px 14px rgba(0,0,0,0.08);
       text-align: left;
-      border-left: 6px solid #1e81b0; /* Corrib blue accent */
+      border-left: 6px solid #1e81b0;
     }
 
     h2 {
@@ -69,14 +65,22 @@
     .falling { color: #dc2626; }
     .steady { color: #ca8a04; }
 
-    small {
-      color: #6b7280;
-    }
-
     label {
       display: block;
       margin-bottom: 6px;
       font-size: 1.05em;
+    }
+
+    .cost-line {
+      margin: 4px 0;
+      font-size: 1.05em;
+    }
+
+    .cost-total {
+      font-size: 1.3em;
+      font-weight: 700;
+      color: #0a3d62;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -84,10 +88,8 @@
   <div class="container">
 
     <!-- Title -->
-    <div class="title">
-      <h1>Welcome to Esox Expeditions</h1>
-      <p class="subtitle">Next trip: Lough Corrib</p>
-    </div>
+    <h1>Welcome to Esox Expeditions</h1>
+    <p class="subtitle">Next trip: Lough Corrib</p>
 
     <!-- Trip Details -->
     <div class="card">
@@ -111,17 +113,25 @@
         🌡️ Pressure: 993.4 hPa<br>
         🌙 Moon: Quarter<br>
         🐊 Feeding: <span id="pike-feeding">Good</span><br>
-        🎣 Lure: <span id="pike-lure">Loading…</span><br>
-        💬 Why this lure: <span id="pike-lure-reason">Loading…</span><br>
+        🎣 Lure Type: <span id="pike-lure">Loading…</span><br>
+        🎨 Lure Colour: <span id="pike-colour">Loading…</span><br>
+        💬 Why this works: <span id="pike-lure-reason">Loading…</span><br>
         🔥 Activity: <span id="pike-activity">Loading…</span>
       </p>
     </div>
 
-    <!-- Travel Time -->
+    <!-- Travel Breakdown -->
     <div class="card">
-      <h2>🚗 Live Travel Time</h2>
-      <p id="travel">Loading…</p>
-      <small>Brookfield Park Rathnew → Cianlea Swords → Birchall Lodge</small>
+      <h2>🚗 Travel Breakdown (No Traffic)</h2>
+      <p class="cost-line">🏡 Rathnew → Swords: 55 min</p>
+      <p class="cost-line">🏙️ Swords → Corrib: 2 hr 35 min</p>
+      <p class="cost-line"><strong>Total: 3 hr 30 min</strong></p>
+    </div>
+
+    <!-- Cost Calculator -->
+    <div class="card">
+      <h2>💶 Estimated Trip Cost (Per Person)</h2>
+      <div id="cost-output">Calculating…</div>
     </div>
 
     <!-- Pack List -->
@@ -148,7 +158,7 @@
     function startCountdown() {
       const now = new Date();
       const year = now.getFullYear();
-      const target = new Date(year, 2, 7, 5, 0, 0); // March 7, 5am
+      const target = new Date(year, 2, 7, 5, 0, 0);
 
       function update() {
         const now = new Date();
@@ -177,7 +187,7 @@
 
 
     /* ------------------------------
-       WEATHER (with rainfall estimation)
+       WEATHER (robust)
     ------------------------------ */
     async function loadWeather() {
       try {
@@ -195,7 +205,7 @@
         document.getElementById("weather").textContent =
           `🌡️ ${temp}°C   💨 ${wind} km/h   🧭 ${dir}`;
 
-        window._weatherDescription = desc; // store for lure logic
+        window._weatherDescription = desc;
       } catch {
         document.getElementById("weather").textContent = "Error loading weather";
         window._weatherDescription = "";
@@ -205,74 +215,48 @@
 
 
     /* ------------------------------
-       TRAVEL TIME (bulletproof)
-    ------------------------------ */
-    async function loadTravel() {
-      try {
-        const r = await fetch("/travel");
-        const data = await r.json();
-
-        let raw = data?.routes?.[0]?.duration;
-        if (!raw) throw new Error("Missing duration");
-
-        raw = String(raw).replace(/[^0-9]/g, "");
-        const sec = parseInt(raw, 10);
-
-        if (isNaN(sec)) throw new Error("Bad duration");
-
-        const h = Math.floor(sec / 3600);
-        const m = Math.floor((sec % 3600) / 60);
-
-        document.getElementById("travel").textContent = `${h}h ${m}m`;
-      } catch {
-        document.getElementById("travel").textContent = "Travel error";
-      }
-    }
-    loadTravel();
-
-
-    /* ------------------------------
-       LURE RECOMMENDATION ENGINE
-       Based on:
-       - water trend
-       - water level
-       - weather description
-       - estimated rainfall
+       LURE ENGINE
     ------------------------------ */
     function estimateRain(desc) {
       if (!desc) return "dry";
-
-      if (desc.includes("rain") || desc.includes("showers") || desc.includes("drizzle"))
+      if (desc.includes("rain") || desc.includes("shower") || desc.includes("drizzle"))
         return "wet";
-
       if (desc.includes("cloud") || desc.includes("overcast"))
         return "neutral";
-
       return "dry";
     }
 
-    function getLureRecommendation(trend, level, weatherDesc) {
-      const rain = estimateRain(weatherDesc);
+    function getLureColour(desc, trend) {
+      const rain = estimateRain(desc);
 
-      // Rising water + wet weather = aggressive pike
+      if (rain === "wet" || trend === "rising")
+        return "Chartreuse / Orange (murky water boost)";
+
+      if (desc.includes("clear"))
+        return "Silver / Perch pattern (natural presentation)";
+
+      return "Black / Gold (low light contrast)";
+    }
+
+    function getLureRecommendation(trend, level, desc) {
+      const rain = estimateRain(desc);
+
       if (trend === "rising") {
         return {
           lure: "Fast crankbaits & spinnerbaits",
-          reason: "Rising water and wet weather push baitfish into shallows, triggering aggressive strikes.",
+          reason: "Rising water pushes baitfish shallow, triggering aggressive pike.",
           activity: "Excellent"
         };
       }
 
-      // Falling water = deeper, slower presentations
       if (trend === "falling") {
         return {
           lure: "Slow soft plastics & jigs",
-          reason: "Falling water makes pike hold deeper and prefer slower, bottom‑oriented lures.",
+          reason: "Pike hold deeper during falling water and prefer slower presentations.",
           activity: "Fair"
         };
       }
 
-      // Steady water
       if (rain === "wet") {
         return {
           lure: "Bright spinnerbaits & paddle tails",
@@ -283,7 +267,7 @@
 
       return {
         lure: "Glide baits & jerkbaits",
-        reason: "Stable water and dry conditions favour natural, mid‑depth presentations.",
+        reason: "Stable water and dry conditions favour natural mid‑depth movement.",
         activity: "Good"
       };
     }
@@ -299,37 +283,62 @@
 
         const waterEl = document.getElementById("pike-water");
         const lureEl = document.getElementById("pike-lure");
+        const colourEl = document.getElementById("pike-colour");
         const reasonEl = document.getElementById("pike-lure-reason");
         const activityEl = document.getElementById("pike-activity");
 
         if (data.error || typeof data.value !== "number") {
           waterEl.textContent = "Error";
-          lureEl.textContent = "Fallback: jerkbaits";
-          reasonEl.textContent = "Unable to load water data.";
-          activityEl.textContent = "Unknown";
           return;
         }
 
         const level = data.value;
         const trend = data.trend;
-        const weatherDesc = window._weatherDescription ?? "";
+        const desc = window._weatherDescription ?? "";
 
         waterEl.textContent = `${level.toFixed(2)} m (${trend})`;
 
-        const rec = getLureRecommendation(trend, level, weatherDesc);
+        const rec = getLureRecommendation(trend, level, desc);
+        const colour = getLureColour(desc, trend);
 
         lureEl.textContent = rec.lure;
+        colourEl.textContent = colour;
         reasonEl.textContent = rec.reason;
         activityEl.textContent = rec.activity;
 
       } catch {
         document.getElementById("pike-water").textContent = "Error";
-        document.getElementById("pike-lure").textContent = "Fallback: jerkbaits";
-        document.getElementById("pike-lure-reason").textContent = "Unable to load water data.";
-        document.getElementById("pike-activity").textContent = "Unknown";
       }
     }
     loadPikeConditions();
+
+
+    /* ------------------------------
+       COST CALCULATOR
+    ------------------------------ */
+    function calculateCosts() {
+      const fuelPrice = 1.69;
+      const kmPerLitre = 15;
+      const tolls = 10; // assume €10 total
+      const accommodation = 65;
+      const boat = 47;
+
+      const distance = 270; // Rathnew → Swords → Corrib
+      const litres = distance / kmPerLitre;
+      const fuelCost = litres * fuelPrice;
+
+      const perPerson =
+        (fuelCost + tolls + accommodation + boat) / 3;
+
+      document.getElementById("cost-output").innerHTML = `
+        <div class="cost-line">⛽ Fuel: €${fuelCost.toFixed(2)}</div>
+        <div class="cost-line">🛣️ Tolls: €${tolls} (split 3 ways)</div>
+        <div class="cost-line">🏨 Accommodation: €${accommodation}</div>
+        <div class="cost-line">🛶 Boat Hire: €${boat}</div>
+        <div class="cost-total">Total Per Person: €${perPerson.toFixed(2)}</div>
+      `;
+    }
+    calculateCosts();
   </script>
 </body>
 </html>
