@@ -123,6 +123,25 @@
       </p>
     </div>
 
+    <!-- King of Kings Leaderboard -->
+    <div class="card">
+      <h2>👑 The King of Kings</h2>
+      <p class="cost-line">Keiran — 👑👑👑👑 (4 crowns)</p>
+      <p class="cost-line">Al — 👑👑👑 (3 crowns)</p>
+      <p class="cost-line">Heno — 👑👑 (2 crowns)</p>
+    </div>
+
+    <!-- The MEGAHEN -->
+    <div class="card">
+      <h2>🐟 The MEGAHEN</h2>
+      <p class="cost-line">The legendary catch that set the standard.</p>
+      <img 
+        src="https://raw.githubusercontent.com/almackey07-ux/almackey07-ux.github.io/main/IMG-20250609-WA0018.jpg"
+        alt="The Megahen Pike"
+        style="width:100%; border-radius:12px; margin-top:10px;"
+      >
+    </div>
+
     <div class="card">
       <h2>🚗 Travel Breakdown (No Traffic)</h2>
       <p class="cost-line">🏡 Rathnew → Swords: 55 min</p>
@@ -321,7 +340,7 @@
     function calculateCosts() {
       const fuelPrice     = 1.69;
       const kmPerLitre    = 15;
-      const tollsTotal    = 20;
+      const tollsTotal    = 10;
       const accommodation = 65;
       const boat          = 47;
       const people        = 3;
@@ -339,10 +358,10 @@
         fuelPerPerson + tollPerPerson + accomPerPerson + boatPerPerson;
 
       document.getElementById("cost-output").innerHTML = `
-        <div class="cost-line">⛽ Fuel: €${fuelCost.toFixed(2)}</div>
-        <div class="cost-line">🛣️ Tolls: €${tollsTotal}</div>
-        <div class="cost-line">🏨 Accommodation: €${accomPerPerson.toFixed(2)}</div>
-        <div class="cost-line">🛶 Boat Hire: €${boatPerPerson.toFixed(2)}</div>
+        <div class="cost-line">⛽ Fuel (return): €${fuelCost.toFixed(2)} (~€${fuelPerPerson.toFixed(2)} per person)</div>
+        <div class="cost-line">🛣️ Tolls: €${tollsTotal} (~€${tollPerPerson} per person)</div>
+        <div class="cost-line">🏨 Accommodation: €${accomPerPerson.toFixed(2)} per person</div>
+        <div class="cost-line">🛶 Boat Hire: €${boatPerPerson.toFixed(2)} per person</div>
         <div class="cost-total">Total Per Person: €${totalPerPerson.toFixed(2)}</div>
       `;
     }
